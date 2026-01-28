@@ -28,13 +28,15 @@
   </div>
 </main>
 
-<script src="loader.cms.js?v=6"></script>
+<script src="loader.cms.js?v=8"></script>
 <script>
   window.CMS_LOADER && window.CMS_LOADER.init({
-    page:'builds',
-    buildsIndex:'content/_indexes/builds.json',
-    sel:{builds:'#builds-grid'},
-    clearHardcode:true
+    page: 'builds',
+    gamesIndex:  'content/games/index.json',
+    buildsIndex: 'content/builds/index.json',
+    toolsIndex:  'content/tools/index.json',
+    sel: { games:'#builds-grid' },
+    clearHardcode: true
   });
 </script>
 </body></html>
