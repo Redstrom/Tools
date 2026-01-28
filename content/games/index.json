@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "slug": "counter-strike-2",
+      "name": "Counter-Strike 2",
+      "status": "actif",
+      "cover": "assets/media/cs2-cover.jpg",
+      "short": "FPS compétitif de Valve."
+    },
+    {
+      "slug": "league-of-legends",
+      "name": "League of Legends",
+      "status": "actif",
+      "cover": "assets/media/lol-cover.jpg",
+      "short": "MOBA compétitif en 5v5."
+    },
+    {
+      "slug": "valorant",
+      "name": "Valorant",
+      "status": "actif",
+      "cover": "assets/media/valorant-cover.jpg",
+      "short": "FPS tactique 5v5."
+    }
+  ]
+}
