@@ -1,0 +1,39 @@
+{
+  "name": "guides",
+  "label": "Guides",
+  "type": "directory",
+  "path": "content/guides",
+  "create": true,
+  "format": "json",
+  "extension": "json",
+  "slug": "{{slug}}",
+  "fields": [
+    { "name": "title", "label": "Titre", "type": "string" },
+    { "name": "slug",  "label": "Slug",  "type": "string" },
+
+    { "name": "gameName", "label": "Nom du jeu", "type": "string", "required": false },
+    { "name": "resource", "label": "Ressource",  "type": "string", "required": false },
+    { "name": "route",    "label": "Route / Plan", "type": "text", "required": false },
+
+    {
+      "name": "tips",
+      "label": "Tips",
+      "type": "list",
+      "field": { "name": "tip", "label": "Tip", "type": "string" },
+      "required": false,
+      "default": []
+    },
+
+    {
+      "name": "cover",
+      "label": "Cover (16:9)",
+      "type": "image",
+      "directory": "assets/media/guides",
+      "publicPath": "/assets/media/guides",
+      "required": false
+    },
+
+    { "name": "date", "label": "Date", "type": "string", "required": false },
+    { "name": "body", "label": "Corps (HTML/Markdown)", "type": "text", "required": false }
+  ]
+}
