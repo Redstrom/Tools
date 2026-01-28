@@ -11,14 +11,14 @@
       "slug": "league-of-legends",
       "name": "League of Legends",
       "status": "actif",
-      "cover": "assets/media/lol-cover.jpg",
+      "cover": "/assets/media/lol-cover.jpg",
       "short": "MOBA compétitif en 5v5."
     },
     {
       "slug": "valorant",
       "name": "Valorant",
       "status": "actif",
-      "cover": "assets/media/valorant-cover.jpg",
+      "cover": "/assets/media/valorant-cover.jpg",
       "short": "FPS tactique 5v5."
     }
   ]
