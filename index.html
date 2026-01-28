@@ -3,232 +3,131 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>REDSTROM TOOLS – Accueil</title>
 
-  <title>REDSTROM TOOLS</title>
-
-  <!-- (Optionnel) Styles utilitaires de base si tu n’as pas déjà ton CSS bundlé -->
   <style>
-    /* Garde l’UI propre sans toucher à ton design existant */
     :root {
-      --bg: #0b0c0d; --fg:#e5e7eb; --muted:#6b7280; --card:#111317; --border:#20242a; --primary:#10b981;
+      --bg: #0b0c0d; --fg:#e5e7eb; --muted:#9ca3af;
+      --card:#101317; --border:#1f242b; --primary:#22c55e;
     }
-    body {margin:0; background:var(--bg); color:var(--fg); font: 14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif;}
-    a { color: #22c55e; text-decoration:none }
-    a:hover { text-decoration:underline }
+    body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif}
+    a{color:#22c55e;text-decoration:none} a:hover{text-decoration:underline}
+    .container{max-width:1200px;margin:0 auto;padding:0 16px}
+    header{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(11,12,13,.6);border-bottom:1px solid var(--border)}
+    .hstack{display:flex;align-items:center;gap:16px}.spacer{flex:1}
+    nav a{display:inline-flex;padding:10px 8px;border-radius:8px}
+    nav a:hover{background:rgba(255,255,255,.04)}
+    .section{padding:28px 0}
+    .section h2{font-size:1.3rem;margin:0 0 10px}
+    .bar{height:3px;width:48px;background:var(--primary);border-radius:999px}
+    .grid{display:grid;gap:1.25rem}
+    @media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
-    header { position:sticky; top:0; z-index:50; backdrop-filter: blur(8px); background:rgba(11,12,13,.6); border-bottom:1px solid var(--border); }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
-    .hstack { display:flex; align-items:center; gap:16px }
-    .spacer { flex:1 }
+    /* --- Cartes --- */
+    .card--game{position:relative;border:1px solid var(--border);background:#0f1115;border-radius:12px;overflow:hidden;transition:border-color .25s,box-shadow .25s,transform .25s;box-shadow:0 6px 24px rgba(0,0,0,.28)}
+    .card--game:hover{border-color:#22c55e;box-shadow:0 10px 36px rgba(0,0,0,.35)}
+    .card-media{position:relative;aspect-ratio:16/9;overflow:hidden}
+    .card-media img,.card-media .media-ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .card--game:hover .card-media img{transform:scale(1.05)}
+    .media-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,21,.9),rgba(15,17,21,.35) 45%,rgba(0,0,0,0) 70%)}
+    .badge-pill{display:inline-flex;align-items:center;gap:.25rem;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;line-height:1;background:#00e701;color:#031b09;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+    .badge-tier{background:#10b981;color:#062015}
+    .publisher{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#22c55e}
+    .card-body{padding:16px 16px 10px}.title{font-size:1.125rem;font-weight:800;margin:6px 0 4px}.excerpt{font-size:.95rem;color:var(--muted)}
+    .card-foot{display:flex;gap:18px;align-items:center;justify-content:flex-start;padding:12px 16px;border-top:1px solid var(--border);background:rgba(255,255,255,.03);font-size:.9rem;color:var(--muted)}
+    .metric{display:inline-flex;align-items:center;gap:6px}
+    .metric svg{display:block}
+    .media-ph{background:radial-gradient(1200px 280px at -10% -10%,#1b2330,transparent 40%),radial-gradient(1000px 400px at 110% 110%,#141922,transparent 45%),#0f1115}
 
-    /* Grilles et cartes (mêmes classes que tu utilises déjà) */
-    .grid { display:grid; gap: 1.5rem; }
-    @media (min-width: 768px) { .md\:grid-cols-2 { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-    @media (min-width: 1024px){ .lg\:grid-cols-3 { grid-template-columns: repeat(3,minmax(0,1fr)); } }
-
-    .section { padding: 32px 0; }
-    .section h2 { font-size: 1.5rem; margin: 0 0 12px; }
-    .muted { color: var(--muted); }
-
-    /* Styles carte compatibles avec tes classes existantes */
-    .gaming-card, .card {
-      border:1px solid var(--border);
-      background: var(--card);
-      border-radius: 10px;
-      overflow:hidden;
-      box-shadow: 0 1px 0 rgba(255,255,255,.02), 0 10px 30px rgba(0,0,0,.25);
-      display:flex; flex-direction:column;
-    }
-    .aspect-video { position:relative; width:100%; padding-top:56.25%; }
-    .aspect-video > img, .aspect-video > video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-    .badge {
-      display:inline-flex; align-items:center; gap:.25rem;
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:999px; padding: 2px 8px; font-size: 11px; font-weight: 600;
-      background: var(--primary); color:#000;
-    }
-    .bar { height: 3px; width: 48px; background: var(--primary); border-radius: 999px; }
-    .row { display:flex; align-items:center; justify-content:space-between; gap:.75rem }
-    .card-body { padding: 16px; }
-    .card-foot { padding: 12px 16px; border-top: 1px solid var(--border); background: rgba(255,255,255,.02); }
-
-    /* --- Cartes "gaming" façon mockup --- */
-.card--game {
-  position: relative;
-  border: 1px solid var(--border);
-  background: #0f1115;            /* fond plus sombre pour contraster */
-  border-radius: 12px;
-  overflow: hidden;
-  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
-  box-shadow: 0 6px 24px rgba(0,0,0,.28);
-}
-.card--game:hover {
-  border-color: #22c55e;          /* vert comme sur ta capture */
-  box-shadow: 0 10px 36px rgba(0,0,0,.35);
-}
-
-/* Header visuel */
-.card--game .card-media {
-  position: relative;
-  aspect-ratio: 16/9;
-  overflow: hidden;
-}
-.card--game .card-media img,
-.card--game .card-media .media-ph {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform .5s ease;
-}
-.card--game:hover .card-media img { transform: scale(1.05); }
-
-/* Dégradé sombre en bas de l'image */
-.card--game .media-grad {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(15,17,21,.9), rgba(15,17,21,.35) 45%, rgba(0,0,0,0) 70%);
-}
-
-/* Badges (Actif, Tier, éditeur) */
-.badge-pill {
-  display: inline-flex; align-items: center; gap: .25rem;
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 999px; padding: 3px 9px;
-  font-size: 11px; font-weight: 700; line-height: 1;
-  background:#00e701; color:#031b09;
-  box-shadow: 0 2px 10px rgba(0,0,0,.35);
-}
-.badge-tier {
-  background:#10b981; color:#062015;
-}
-
-/* Editeur en petite caps, couleur marque */
-.publisher {
-  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-  font-weight: 800; color: #22c55e;
-}
-
-/* Corps & footer */
-.card--game .card-body { padding: 16px 16px 10px; }
-.card--game .title { font-size: 1.125rem; font-weight: 800; margin: 6px 0 4px; }
-.card--game .excerpt { font-size: .95rem; color: var(--muted); }
-
-.card--game .card-foot {
-  display:flex; gap: 18px; align-items:center; justify-content:flex-start;
-  padding: 12px 16px; border-top: 1px solid var(--border);
-  background: rgba(255,255,255,.03);
-  font-size: .85rem; color: var(--muted);
-}
-
-/* Petites "chips" métriques */
-.metric { display:inline-flex; align-items:center; gap:6px; }
-.metric .dot { width:8px; height:8px; border-radius:999px; display:inline-block; }
-.metric .dot.green { background:#22c55e; }
-.metric .dot.gray  { background:#6b7280; }
-.metric strong { color:#e5e7eb; font-weight:700; }
-
-/* Placeholder si pas d'image */
-.media-ph {
-  background: radial-gradient(1200px 280px at -10% -10%, #1b2330, transparent 40%),
-              radial-gradient(1000px 400px at 110% 110%, #141922, transparent 45%),
-              #0f1115;
-}
-    
+    /* Boutons */
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#131720;color:var(--fg)}
+    .btn:hover{border-color:#22c55e}
   </style>
 </head>
-
 <body>
-  <!-- ======= HEADER ======= -->
   <header>
     <div class="container hstack" style="height:64px;">
-      <a href="/" class="hstack" style="gap:12px;">
-        <div style="width:32px;height:32px;border-radius:8px;background:var(--primary);display:grid;place-items:center;color:#000;font-weight:900;">K</div>
-        <div style="font-weight:800;letter-spacing:-.02em;">REDSTROM<span style="color:var(--primary)">GAMES</span></div>
+      <a href="index.html" class="hstack" style="gap:12px;text-decoration:none">
+        <div style="width:32px;height:32px;border-radius:8px;background:#22c55e;display:grid;place-items:center;color:#000;font-weight:900">K</div>
+        <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
       </a>
-      <nav class="hstack" style="gap:18px; margin-left: 24px;">
-        <a href="#jeux">Jeux</a>
-        <a href="#builds">Builds</a>
-        <a href="#guides">Guides</a>
-        <a href="#outils">Outils</a>
+      <nav class="hstack" style="gap:16px;margin-left:24px">
+        games.html">Jeux</a>
+        builds.html">Builds</a>
+        guides.html">Guides</a>
+        tools.html">Outils</a>
       </nav>
       <div class="spacer"></div>
-      <!-- (Optionnel) actions utilisateur / admin -->
     </div>
   </header>
 
-  <!-- ======= MAIN ======= -->
   <main>
     <div class="container">
-      <!-- HERO (facultatif) -->
-      <section class="section" id="hero">
-        <div class="card" style="overflow:hidden;">
-          <div class="aspect-video">
-            <!-- Image décorative : remplace par ton image si tu veux -->
-            <img src="assets/media/hero.jpg" alt="" />
-          </div>
-          <div class="card-body">
-            <div class="badge">Nouveau</div>
-            <h1 style="margin:8px 0 10px; font-size: 2rem;">Dominez la Faille avec nos Guides <span style="color:var(--primary)">Pro</span></h1>
-            <p class="muted">Builds performants, guides de farm et outils recommandés. Tout est piloté par le CMS.</p>
-          </div>
+      <!-- JEUX (extrait) -->
+      <section class="section">
+        <div class="row">
+          <h2>Jeux</h2>
+          
         </div>
-      </section>
-
-      <!-- JEUX -->
-      <section class="section" id="jeux">
-        <h2>Jeux</h2>
         <div class="bar" aria-hidden="true"></div>
-        <!-- 👉 Conteneur VIDE : le loader insère les cartes Jeux ici -->
         <div id="games-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
-      <!-- BUILDS -->
-      <section class="section" id="builds">
-        <h2>Builds</h2>
+      <!-- BUILDS (extrait) -->
+      <section class="section">
+        <div class="row">
+          <h2>Builds</h2>
+          
+        </div>
         <div class="bar" aria-hidden="true"></div>
-        <!-- 👉 Conteneur VIDE : le loader insère les cartes Builds ici -->
         <div id="builds-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
-      <!-- GUIDES -->
-      <section class="section" id="guides">
-        <h2>Guides</h2>
+      <!-- GUIDES (extrait) -->
+      <section class="section">
+        <div class="row">
+          <h2>Guides</h2>
+          
+        </div>
         <div class="bar" aria-hidden="true"></div>
-        <!-- 👉 Conteneur VIDE : le loader insère les cartes Guides ici -->
         <div id="guides-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
-      <!-- OUTILS -->
-      <section class="section" id="outils">
-        <h2>Outils recommandés</h2>
+      <!-- OUTILS (extrait) -->
+      <section class="section">
+        <div class="row">
+          <h2>Outils</h2>
+          
+        </div>
         <div class="bar" aria-hidden="true"></div>
-        <!-- 👉 Conteneur VIDE : le loader insère les cartes Outils ici -->
         <div id="tools-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
     </div>
   </main>
 
-  <!-- ======= FOOTER ======= -->
-  <footer class="section" style="border-top:1px solid var(--border);">
+  <footer class="section" style="border-top:1px solid var(--border)">
     <div class="container row">
-      <div class="muted">© 2026 REDSTROM</div>
-      <div class="muted">Propulsé par Pages CMS</div>
+      <div style="color:var(--muted)">© 2026 REDSTROM</div>
+      <div style="color:var(--muted)">Propulsé par Pages CMS</div>
     </div>
   </footer>
 
-  <!-- ======= LOADER CMS ======= -->
-  <!-- Place ton fichier loader ici (racine ou /public) -->
-  <script src="loader.cms.js"></script>
-
-<script>
-  window.CMS_LOADER && window.CMS_LOADER.init({
-    gamesIndex:  'content/games/index.json',
-    buildsIndex: 'content/builds/index.json',
-    guidesIndex: 'content/guides/index.json',
-    toolsIndex:  'content/tools/index.json',
-    sel: { games:'#games-grid', builds:'#builds-grid', guides:'#guides-grid', tools:'#tools-grid' },
-    clearHardcode: true
-  });
-</script>
-
-
+  <!-- Loader (sans defer) -->
+  loader.cms.js?v=mp1"></script>
+  <script>
+    window.CMS_LOADER && window.CMS_LOADER.init({
+      // Home = aperçu (limites par section)
+      home: { gamesLimit: 3, buildsLimit: 3, guidesLimit: 3, toolsLimit: 3 },
+      // Endpoints relatifs → le loader préfixe tout seul pour /Tools/
+      gamesIndex:  'content/games/index.json',
+      buildsIndex: 'content/builds/index.json',
+      guidesIndex: 'content/guides/index.json',
+      toolsIndex:  'content/tools/index.json',
+      sel: { games:'#games-grid', builds:'#builds-grid', guides:'#guides-grid', tools:'#tools-grid' },
+      clearHardcode: true
+    });
+  </script>
 </body>
 </html>
