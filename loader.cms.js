@@ -71,7 +71,7 @@
       gameCard: (g)=> `
         <article class="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden h-full flex flex-col">
           <div class="relative aspect-video overflow-hidden">
-            ${g.cover ? `<img alt="${g.name||''}" src="/${g.cover}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">` : ''}
+            ${g.cover ? `<img alt="${g.name||''}" src="${g.cover || ''}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">` : ''}
             <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent"></div>
             ${g.status ? `<div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold absolute top-3 left-3" style="background:#00e701;color:#000;">${g.status}</div>`: ''}
           </div>
