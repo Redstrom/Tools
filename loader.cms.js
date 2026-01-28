@@ -148,16 +148,16 @@
     tpl: {
       // Génère un bloc image : <img> si cover, sinon placeholder visuel
       imgBlock(src, alt) {
-        if (src && typeof src === 'string') {
-          const realSrc = CMS.normalizeAsset(src);
-          return `
-            ${realSrc}" alt="${(alt || '').replace(/"/g,'&quot;')}"
-                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">`;
-        }
-        // Placeholder si pas d'image (garde la mise en forme élégante)
-        return `
-          <div class="h-full w-full bg-gradient-to-br from-zinc-800/60 via-zinc-700/50 to-zinc-900/60"></div>`;
-      },
+  if (src && typeof src === 'string') {
+    const realSrc = CMS.normalizeAsset(src);
+    return `
+      <img src="${realSrc}" alt="${(alt || '').replace(/"/g,'&quot;')}"
+           class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">`;
+  }
+  // Placeholder si pas d'image (garde la mise en forme élégante)
+  return `
+    <div class="h-full w-full bg-gradient-to-br from-zinc-800/60 via-zinc-700/50 to-zinc-900/60"></div>`;
+},
 
       gameCard: (g) => `
         <article class="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden h-full flex flex-col">
