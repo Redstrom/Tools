@@ -136,23 +136,18 @@
   <!-- ======= LOADER CMS ======= -->
   <!-- Place ton fichier loader ici (racine ou /public) -->
   <script src="/loader.cms.js" defer></script>
-  <script>
-    // Au cas où le ‘defer’ arrive après DOMContentLoaded
-    window.addEventListener('DOMContentLoaded', function () {
-      if (window.CMS_LOADER) {
-        window.CMS_LOADER.init({
-          // Conserve les sélecteurs : le script se base dessus
-          sel: {
-            games:  '#games-grid',
-            builds: '#builds-grid',
-            guides: '#guides-grid',
-            tools:  '#tools-grid'
-          },
-          // Important : supprime le hard-code si tu avais des cartes dans ces conteneurs
-          clearHardcode: true
-        });
-      }
-    });
-  </script>
+<script>
+  window.CMS_LOADER && window.CMS_LOADER.init({
+    // Chemins relatifs (sans slash initial) pour un Project site GitHub Pages
+    gamesIndex:  'content/games/index.json',
+    buildsIndex: 'content/builds/index.json',
+    guidesIndex: 'content/guides/index.json',
+    toolsIndex:  'content/tools/index.json',
+    sel: { 
+      games:'#games-grid', builds:'#builds-grid', guides:'#guides-grid', tools:'#tools-grid' 
+    },
+    clearHardcode: true
+  });
+</script>
 </body>
 </html>
