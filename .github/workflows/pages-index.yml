@@ -7,7 +7,7 @@ on:
       - 'content/**'
       - '.pages.yml'
       - 'scripts/build-content-index.mjs'
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,21 +20,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - name: Build indexes
         run: node scripts/build-content-index.mjs
+
       - name: Commit & push
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add content/**/index.json || true
           if git diff --staged --quiet; then
-            echo "No changes to commit";
+            echo "No changes to commit"
           else
             git commit -m "chore(content): build indexes"
             git push
           fi
-``
