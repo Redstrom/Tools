@@ -1,54 +1,108 @@
-# /.pages.yml — version compacte qui ré-affiche les 4 collections dans la barre latérale
+# --- Pages CMS (.pages.yml) — FORCÉ pour afficher les collections ---
 
 media:
   input: "assets/media"
   output: "/assets/media"
 
 collections:
-  games:
+  # JEUX
+  - name: "games"
     label: "Jeux"
-    type: "directory"
-    path: "content/games"
-    create: true
-    format: "json"
-    extension: "json"
-    slug: "{{slug}}"
-    fields:
-      - { name: "name",  label: "Nom",  type: "string" }
-      - { name: "slug",  label: "Slug", type: "string" }
+    type: "files"
+    files:
+      - name: "league-of-legends"
+        label: "League of Legends"
+        path: "content/games/league-of-legends.json"
+        format: "json"
+        fields:
+          - { name: "name",  label: "Nom",  type: "string" }
+          - { name: "slug",  label: "Slug", type: "string" }
+          - { name: "status",label: "Statut", type: "string", required: false }
+          - { name: "cover", label: "Cover",  type: "image",  required: false }
+          - { name: "short", label: "Description courte", type: "text", required: false }
+          - { name: "publisher", label: "Éditeur / Studio", type: "string", required: false }
 
-  builds:
+      - name: "valorant"
+        label: "Valorant"
+        path: "content/games/valorant.json"
+        format: "json"
+        fields:
+          - { name: "name",  label: "Nom",  type: "string" }
+          - { name: "slug",  label: "Slug", type: "string" }
+          - { name: "status",label: "Statut", type: "string", required: false }
+          - { name: "cover", label: "Cover",  type: "image",  required: false }
+          - { name: "short", label: "Description courte", type: "text", required: false }
+          - { name: "publisher", label: "Éditeur / Studio", type: "string", required: false }
+
+      - name: "counter-strike-2"
+        label: "Counter-Strike 2"
+        path: "content/games/counter-strike-2.json"
+        format: "json"
+        fields:
+          - { name: "name",  label: "Nom",  type: "string" }
+          - { name: "slug",  label: "Slug", type: "string" }
+          - { name: "status",label: "Statut", type: "string", required: false }
+          - { name: "cover", label: "Cover",  type: "image",  required: false }
+          - { name: "short", label: "Description courte", type: "text", required: false }
+          - { name: "publisher", label: "Éditeur / Studio", type: "string", required: false }
+
+  # BUILDS
+  - name: "builds"
     label: "Builds"
-    type: "directory"
-    path: "content/builds"
-    create: true
-    format: "json"
-    extension: "json"
-    slug: "{{slug}}"
-    fields:
-      - { name: "title", label: "Titre", type: "string" }
-      - { name: "slug",  label: "Slug",  type: "string" }
+    type: "files"
+    files:
+      - name: "aatrox-top-sustained-carry"
+        label: "Aatrox Top – Sustained Carry"
+        path: "content/builds/aatrox-top-sustained-carry.json"
+        format: "json"
+        fields:
+          - { name: "title", label: "Titre", type: "string" }
+          - { name: "slug",  label: "Slug",  type: "string" }
+          - { name: "gameName", label: "Nom du jeu", type: "string", required: false }
+          - { name: "tier",  label: "Tier",  type: "string", required: false }
+          - { name: "version", label: "Version", type: "string", required: false }
+          - { name: "summary", label: "Résumé", type: "text", required: false }
+          - { name: "difficulty", label: "Difficulté (texte)", type: "string", required: false }
+          - { name: "difficultyStars", label: "Difficulté (étoiles 1..5)", type: "number", required: false }
+          - { name: "cost", label: "Coût (0..5)", type: "number", required: false }
+          - { name: "cover", label: "Cover", type: "image", required: false }
+          - { name: "updatedAt", label: "Mise à jour", type: "string", required: false }
+          - { name: "body", label: "Corps (HTML/Markdown)", type: "text", required: false }
 
-  guides:
+  # GUIDES (exemple unique pour débloquer l’affichage)
+  - name: "guides"
     label: "Guides"
-    type: "directory"
-    path: "content/guides"
-    create: true
-    format: "json"
-    extension: "json"
-    slug: "{{slug}}"
-    fields:
-      - { name: "title", label: "Titre", type: "string" }
-      - { name: "slug",  label: "Slug",  type: "string" }
+    type: "files"
+    files:
+      - name: "farm-or-early"
+        label: "Farm d’Or rapide – early game"
+        path: "content/guides/farm-or-early.json"
+        format: "json"
+        fields:
+          - { name: "title", label: "Titre", type: "string" }
+          - { name: "slug",  label: "Slug",  type: "string" }
+          - { name: "gameName", label: "Nom du jeu", type: "string", required: false }
+          - { name: "resource", label: "Ressource", type: "string", required: false }
+          - { name: "route", label: "Route / Plan", type: "text", required: false }
+          - { name: "cover", label: "Cover", type: "image", required: false }
+          - { name: "date", label: "Date", type: "string", required: false }
+          - { name: "body", label: "Corps (HTML/Markdown)", type: "text", required: false }
 
-  tools:
+  # OUTILS (exemple unique pour débloquer l’affichage)
+  - name: "tools"
     label: "Outils"
-    type: "directory"
-    path: "content/tools"
-    create: true
-    format: "json"
-    extension: "json"
-    slug: "{{slug}}"
-    fields:
-      - { name: "title", label: "Titre", type: "string" }
-      - { name: "slug",  label: "Slug",  type: "string" }
+    type: "files"
+    files:
+      - name: "game-overlay-example"
+        label: "Overlay Statistiques eSport"
+        path: "content/tools/game-overlay-example.json"
+        format: "json"
+        fields:
+          - { name: "title", label: "Titre", type: "string" }
+          - { name: "slug",  label: "Slug",  type: "string", required: false }
+          - { name: "kind",  label: "Type",  type: "string", required: false }
+          - { name: "url",   label: "URL",   type: "string", required: false }
+          - { name: "notes", label: "Notes", type: "text",   required: false }
+          - { name: "gameName", label: "Nom du jeu", type: "string", required: false }
+          - { name: "cover", label: "Cover", type: "image", required: false }
+          - { name: "body",  label: "Corps (HTML/Markdown)", type: "text", required: false }
