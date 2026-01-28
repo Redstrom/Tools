@@ -1,0 +1,95 @@
+media:
+  input: assets/media
+  output: /assets/media
+
+content:
+  - name: games
+    label: Jeux
+    type: collection
+    path: content/games
+    filename: "{slug}.json"
+    view:
+      fields: [ name, slug, status ]
+      primary: name
+      sort: [ name ]
+    fields:
+      - { name: name, label: Nom, type: string, required: true }
+      - { name: slug, label: Slug, type: string, required: true }
+      - { name: status, label: Statut, type: select, options: [actif, maintenance, bientot], default: actif }
+      - { name: cover, label: Couverture, type: image }
+      - { name: short, label: Description courte, type: text, options: { rows: 3, maxlength: 180 } }
+      - name: platforms
+        label: Plateformes
+        type: object
+        list: true
+        fields:
+          - { name: name, label: Nom, type: string }
+      - name: tags
+        label: Tags
+        type: object
+        list: true
+        fields:
+          - { name: tag, label: Tag, type: string }
+
+  - name: builds
+    label: Builds
+    type: collection
+    path: content/builds
+    filename: "{slug}.json"
+    view:
+      fields: [ title, game, version, tier ]
+      primary: title
+      sort: [ -updatedAt, title ]
+    fields:
+      - { name: title, label: Titre, type: string, required: true }
+      - name: game
+        label: Jeu
+        type: reference
+        options:
+          collection: games
+          search: "name,slug"
+          value: "{path}"
+          label: "{name}"
+      - { name: slug, label: Slug, type: string, required: true }
+      - { name: version, label: Version, type: string }
+      - { name: tier, label: Tier, type: select, options: [S, A, B, C], default: A }
+      - { name: difficulty, label: Difficulté, type: select, options: [Facile, Moyen, Difficile, Expert], default: Moyen }
+      - name: items
+        label: Objets / Compétences clés
+        type: object
+        list: true
+        fields:
+          - { name: name, label: Nom, type: string }
+          - { name: note, label: Note, type: string }
+      - { name: body, label: Détails du build, type: rich-text }
+      - { name: updatedAt, label: MAJ, type: date }
+
+  - name: guides
+    label: Guides de farm
+    type: collection
+    path: content/guides
+    filename: "{slug}.json"
+    view:
+      fields: [ title, game, resource ]
+      primary: title
+      sort: [ -date, title ]
+    fields:
+      - { name: title, label: Titre, type: string, required: true }
+      - name: game
+        label: Jeu
+        type: reference
+        options:
+          collection: games
+          search: "name,slug"
+          value: "{path}"
+          label: "{name}"
+      - { name: resource, label: Ressource/Objet, type: string, required: true }
+      - { name: route, label: Chemin/Spot, type: text, options: { rows: 2 } }
+      - name: tips
+        label: Conseils rapides
+        type: object
+        list: true
+        fields:
+          - { name: tip, label: Conseil, type: string }
+      - { name: body, label: Guide détaillé, type: rich-text }
+      - { name: date, label: Date, type: date }
