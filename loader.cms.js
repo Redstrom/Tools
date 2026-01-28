@@ -2,12 +2,24 @@
   // =========================
   // CONFIG & VERSIONING
   // =========================
-  const VERSION = 'v9.2';
+  const VERSION = 'v9.3';
   const FILE    = 'loader.cms.js';
-  const UPDATE  = { check: true, forceReload: false }; // rechargement auto si activé
+  const UPDATE  = { check: false, forceReload: false }; // tu peux activer l'auto-reload si tu veux
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
-  // ------ Auto-update via ETag (optionnel) ------
+  // =========================
+  // NAMESPACE + ICONS (EVITE "ICONS is not defined")
+  // =========================
+  const CMS = window.CMS_LOADER || {};
+  CMS.ICONS = {
+    eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>',
+    starFilled:'<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
+    starEmpty:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
+    coinFilled:'<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>',
+    coinEmpty:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>'
+  };
+
+  // (facultatif) auto-update
   (async function selfUpdatePing(){
     if (!UPDATE.check) return;
     try {
@@ -26,7 +38,7 @@
   })();
 
   // =========================
-  // UTIL: vues (localStorage)
+  // Vues (localStorage)
   // =========================
   const Views = {
     key:k=>`view:${k}`,
@@ -38,7 +50,7 @@
   // =========================
   // CMS Loader (auto-init)
   // =========================
-  const CMS = {
+  const Loader = {
     cfg:{
       gamesIndex:'', buildsIndex:'', guidesIndex:'', toolsIndex:'',
       sel:{games:'#games-grid',builds:'#builds-grid',guides:'#guides-grid',tools:'#tools-grid'},
@@ -120,7 +132,7 @@
         const href=`detail.html?type=game&slug=${encodeURIComponent(slug)}`;
         const views=Views.get(`game:${slug}`);
         const key=(g.name||'').toLowerCase();
-        return CMS.tpl.gameCard({...g,_href:href,_views:views,_builds:bc.get(key)||0,_tools:tc.get(key)||0});
+        return Loader.tpl.gameCard({...g,_href:href,_views:views,_builds:bc.get(key)||0,_tools:tc.get(key)||0});
       }).join('');
     },
 
@@ -144,7 +156,7 @@
         const views=Views.get(`build:${slug}`);
         const stars=Math.max(1,Math.min(5, parseInt(b.difficultyStars??0,10) || this.starsFromDifficulty(b.difficulty)));
         const coins=Math.max(0,Math.min(5, parseInt(b.cost??0,10)||0));
-        return CMS.tpl.buildCard({...b,_href:href,_views:views,_stars:stars,_coins:coins});
+        return Loader.tpl.buildCard({...b,_href:href,_views:views,_stars:stars,_coins:coins});
       }).join('');
     },
 
@@ -156,7 +168,7 @@
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=guide&slug=${encodeURIComponent(slug)}`;
         const views=Views.get(`guide:${slug}`);
-        return CMS.tpl.guideCard({...x,_href:href,_views:views});
+        return Loader.tpl.guideCard({...x,_href:href,_views:views});
       }).join('');
     },
 
@@ -168,7 +180,7 @@
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=tool&slug=${encodeURIComponent(slug)}`;
         const views=Views.get(`tool:${slug}`);
-        return CMS.tpl.toolCard({...t,_href:href,_views:views});
+        return Loader.tpl.toolCard({...t,_href:href,_views:views});
       }).join('');
     },
 
@@ -192,7 +204,7 @@
       const title=data.title||data.name||slug;
       const publisher=(data.publisher||data.studio||data.gameName||'').toUpperCase();
       const status=data.status||(type==='build'&&data.tier)||'Actif';
-      const coverHtml = data.cover ? CMS.tpl.imgBlock(CMS.normalizeAsset(data.cover), title) : '<div class="media-ph"></div>';
+      const coverHtml = data.cover ? Loader.tpl.imgBlock(Loader.normalizeAsset(data.cover), title) : '<div class="media-ph"></div>';
 
       const head=`
         <div class="hero">
@@ -206,23 +218,19 @@
             </div>
           </div>
         </div>
-        <div style="margin:10px 0 6px;color:#9ca3af"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg><span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>
+        <div style="margin:10px 0 6px;color:#9ca3af"><span class="icon">${CMS.ICONS.eye}</span><span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>
       `;
 
       let body='';
       if(type==='build'){
         const stars=Math.max(1,Math.min(5, parseInt(data.difficultyStars??0,10) || this.starsFromDifficulty(data.difficulty)));
         const coins=Math.max(0,Math.min(5, parseInt(data.cost??0,10)||0));
-        const STAR=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>';
-        const STAR_O=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>';
-        const COIN=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>';
-        const COIN_O=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>';
         body+=`
           <section class="section"><h3>Difficulté</h3><div class="stars">${
-            Array.from({length:5},(_,i)=> i<stars?STAR():STAR_O()).join('')
+            Array.from({length:5},(_,i)=> i<stars?CMS.ICONS.starFilled:CMS.ICONS.starEmpty).join('')
           }</div></section>
           <section class="section"><h3>Coût</h3><div class="coins">${
-            Array.from({length:5},(_,i)=> i<coins?COIN():COIN_O()).join('')
+            Array.from({length:5},(_,i)=> i<coins?CMS.ICONS.coinFilled:CMS.ICONS.coinEmpty).join('')
           }</div></section>`;
       }
       if(data.body) body+=`<section class="section"><h3>Détails</h3><div class="excerpt">${data.body}</div></section>`;
@@ -245,11 +253,11 @@
 
     // -------- Templates --------
     tpl:{
-      // ✅ TOUJOURS un <img> ou un placeholder (jamais du texte brut)
+      // ✅ TOUJOURS un <img> (ou un placeholder) – fini le texte brut
       imgBlock(src, alt){
         const safeAlt = (alt || '').replace(/"/g,'&quot;');
         if (!src) return '<div class="media-ph"></div>';
-        return `<img src="${src}" alt="${safeAlt}" class="h-full w-full object-cover">`;
+        return `${src}" alt="${safeAlt}" class="h-full w-full object-cover">`;
       },
 
       badge(t,cls='badge-pill'){ return `<span class="${cls}">${t}</span>`; },
@@ -265,33 +273,33 @@
       gameCard(g){
         const slug=g.slug||(g.name||'').toLowerCase().replace(/\s+/g,'-');
         const href=g._href||'#', key=`game:${slug}`, views=g._views||0;
-        const publisher=(g.publisher||this.inferPublisherFromName(g.name)).toUpperCase();
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        const publisher=(g.publisher||Loader.tpl.inferPublisherFromName(g.name)).toUpperCase();
+        return `${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
-            ${g.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(g.cover), g.name):'<div class="media-ph"></div>'}
+            ${g.cover?Loader.tpl.imgBlock(Loader.normalizeAsset(g.cover), g.name):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
-            <div style="position:absolute;top:10px;left:10px;">${CMS.tpl.badge(g.status||'Actif')}</div>
+            <div style="position:absolute;top:10px;left:10px;">${Loader.tpl.badge(g.status||'Actif')}</div>
           </div>
           <div class="card-body">
             ${publisher?`<div class="publisher">${publisher}</div>`:''}
             <div class="title">${g.name||''}</div>
             ${g.short?`<p class="excerpt">${g.short}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
       buildCard(b){
         const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=b._href||'#', key=`build:${slug}`, views=b._views||0;
-        const starRow=Array.from({length:5},(_,i)=>ICONS.star(i<(b._stars||3))).join('');
-        const coinRow=Array.from({length:5},(_,i)=>ICONS.coin(i<(b._coins||0))).join('');
-        const publisher=(b.publisher||this.inferPublisherFromName(b.gameName||'')).toUpperCase();
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        const starRow=Array.from({length:5},(_,i)=> i<(b._stars||3)?CMS.ICONS.starFilled:CMS.ICONS.starEmpty).join('');
+        const coinRow=Array.from({length:5},(_,i)=> i<(b._coins||0)?CMS.ICONS.coinFilled:CMS.ICONS.coinEmpty).join('');
+        const publisher=(b.publisher||Loader.tpl.inferPublisherFromName(b.gameName||'')).toUpperCase();
+        return `${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
-            ${b.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(b.cover), b.title):'<div class="media-ph"></div>'}
+            ${b.cover?Loader.tpl.imgBlock(Loader.normalizeAsset(b.cover), b.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
-            ${b.tier?`<div style="position:absolute;top:10px;left:10px;">${CMS.tpl.badge(b.tier,'badge-pill badge-tier')}</div>`:''}
+            ${b.tier?`<div style="position:absolute;top:10px;left:10px;">${Loader.tpl.badge(b.tier,'badge-pill badge-tier')}</div>`:''}
             ${b.gameName?`<div style="position:absolute;bottom:10px;left:12px;" class="publisher">${publisher||b.gameName}</div>`:''}
           </div>
           <div class="card-body">
@@ -299,7 +307,7 @@
             ${b.summary?`<p class="excerpt">${b.summary}</p>`:''}
           </div>
           <div class="card-foot">
-            <span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span>
+            <span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span>
             <span class="metric">${starRow}</span>
             <span class="metric">${coinRow}</span>
           </div>
@@ -309,9 +317,9 @@
       guideCard(x){
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=x._href||'#', key=`guide:${slug}`, views=x._views||0;
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        return `${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
-            ${x.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(x.cover), x.title):'<div class="media-ph"></div>'}
+            ${x.cover?Loader.tpl.imgBlock(Loader.normalizeAsset(x.cover), x.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
             ${x.gameName?`<div style="position:absolute;bottom:10px;left:12px;" class="publisher">${(x.gameName||'').toUpperCase()}</div>`:''}
           </div>
@@ -320,38 +328,38 @@
             ${x.resource?`<p class="excerpt">Ressource : <strong>${x.resource}</strong></p>`:''}
             ${x.route?`<p class="excerpt">${x.route}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
       toolCard(t){
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=t._href||'#', key=`tool:${slug}`, views=t._views||0;
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        return `${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
-            ${t.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(t.cover), t.title):'<div class="media-ph"></div>'}
+            ${t.cover?Loader.tpl.imgBlock(Loader.normalizeAsset(t.cover), t.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
-            ${t.kind?`<div style="position:absolute;top:10px;left:10px;">${CMS.tpl.badge(t.kind)}</div>`:''}
+            ${t.kind?`<div style="position:absolute;top:10px;left:10px;">${Loader.tpl.badge(t.kind)}</div>`:''}
           </div>
           <div class="card-body">
             <div class="title">${t.title||''}</div>
             ${t.gameName?`<div class="publisher" style="margin-top:2px;">${(t.gameName||'').toUpperCase()}</div>`:''}
             ${t.notes?`<p class="excerpt" style="margin-top:6px;">${t.notes}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       }
     }
   };
 
-  // Expose global (reset des vues possible depuis la console)
-  window.CMS_LOADER = CMS;
+  // Expose + reset util
+  window.CMS_LOADER = Loader;
   window.CMS_LOADER_RESET_VIEWS = () => Views.resetAll();
 
-  // Auto-init (aucune init dans l'HTML)
+  // Auto-init
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => CMS.init());
+    document.addEventListener('DOMContentLoaded', () => Loader.init());
   } else {
-    CMS.init();
+    Loader.init();
   }
 })();
