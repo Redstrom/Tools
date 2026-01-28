@@ -2,7 +2,7 @@
   // =========================
   // CONFIG & VERSIONING
   // =========================
-  const VERSION = 'v10.2';
+  const VERSION = 'v10.4';
   const FILE    = 'loader.cms.js';
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
