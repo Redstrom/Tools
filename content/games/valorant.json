@@ -1,9 +1,7 @@
 {
   "name": "Valorant",
-  "slug": "valorant",
-  "status": "actif",
-  "cover": "assets/media/valorant-cover.jpg",
   "short": "FPS tactique 5v5.",
-  "platforms": [{ "name": "PC" }],
-  "tags": [{ "tag": "FPS" }, { "tag": "Compétitif" }]
+  "publisher": "RIOT GAMES",
+  "status": "actif",
+  "cover": "/assets/media/valorant-cover.jpg"
 }
