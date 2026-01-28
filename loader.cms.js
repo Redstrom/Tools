@@ -27,6 +27,29 @@
     resetAll(){ Object.keys(localStorage).forEach(k=>k.startsWith('view:')&&localStorage.removeItem(k)); }
   };
 
+// --- Vue : contrôle "1 par jour & par contenu" ---
+
+function todayKey() {
+  const d = new Date();
+  // yyyy-mm-dd (locale indépendante)
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+/**
+ * Retourne true si on DOIT compter une vue pour ce contenu aujourd'hui (sinon false).
+ * Mémorise un tampon quotidien sous 'viewstamp:<type>:<slug>' avec la date du jour.
+ */
+function shouldCountViewOncePerDay(type, slug) {
+  const key = `viewstamp:${type}:${slug}`;
+  const stamp = localStorage.getItem(key);
+  const today = todayKey();
+  if (stamp === today) return false;        // déjà compté aujourd’hui
+  localStorage.setItem(key, today);         // mémorise la conso du jour
+  return true;
+}
+  
   // =========================
   // Loader (auto-init)
   // =========================
@@ -91,7 +114,6 @@
         case 'tools':  await this.renderTools(true);  break;
         case 'detail': await this.renderDetail();     break;
       }
-      this.bindClicksForViews();
     },
 
     // ---------------- LISTES ----------------
@@ -126,19 +148,48 @@
       const n=parseInt(diff,10); return isFinite(n)?Math.max(1,Math.min(5,n)):3;
     },
 
-    async renderBuilds(full=false,limit=0){
-      const idx = await this.fetchIndex(this.cfg.buildsIndex);
-      const items = idx.items || [];
-      this.clear(this.cfg.sel.builds); const root=document.querySelector(this.cfg.sel.builds); if(!root) return;
-      root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(b=>{
-        const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
-        const href=`detail.html?type=build&slug=${encodeURIComponent(slug)}`;
-        const views=Views.get(`build:${slug}`);
-        const stars=Math.max(1,Math.min(5, parseInt(b.difficultyStars??0,10) || this.starsFromDifficulty(b.difficulty)));
-        const coins=Math.max(0,Math.min(5, parseInt(b.cost??0,10)||0));
-        return CMS.tpl.buildCard({...b,_href:href,_views:views,_stars:stars,_coins:coins});
-      }).join('');
-    },
+async renderBuilds(full=false,limit=0){
+  const idx = await this.fetchIndex(this.cfg.buildsIndex);
+  const rawItems = idx.items || [];
+  const items = rawItems.slice(0, full ? rawItems.length : (limit || rawItems.length));
+
+  const enriched = await Promise.all(items.map(async (b) => {
+    const slug = b.slug || (b.title||'').toLowerCase().replace(/\s+/g,'-');
+    const needsStars = (b.difficultyStars == null || isNaN(+b.difficultyStars));
+    const needsCost  = (b.cost == null || isNaN(+b.cost));
+    if (!needsStars && !needsCost) return b;  // index OK
+
+    const file = await this.fetchJSON(this.cfg.basePrefix + `content/builds/${slug}.json`);
+    if (file) {
+      return {
+        ...b,
+        difficulty:      file.difficulty ?? b.difficulty,
+        difficultyStars: (file.difficultyStars ?? b.difficultyStars),
+        cost:            (file.cost ?? b.cost),
+        summary:         (file.summary ?? b.summary),
+        cover:           (file.cover ?? b.cover),
+        gameName:        (file.gameName ?? b.gameName),
+        tier:            (file.tier ?? b.tier)
+      };
+    }
+    return b;
+  }));
+
+  this.clear(this.cfg.sel.builds);
+  const root = document.querySelector(this.cfg.sel.builds);
+  if (!root) return;
+
+  const html = enriched.map(b=>{
+    const slug  = b.slug || (b.title||'').toLowerCase().replace(/\s+/g,'-');
+    const href  = `detail.html?type=build&slug=${encodeURIComponent(slug)}`;
+    const views = Views.get(`build:${slug}`);
+    const stars = Math.max(1, Math.min(5, parseInt(b.difficultyStars ?? 0, 10) || this.starsFromDifficulty(b.difficulty)));
+    const coins = Math.max(0, Math.min(5, parseInt(b.cost ?? 0, 10) || 0));
+    return CMS.tpl.buildCard({...b, _href: href, _views: views, _stars: stars, _coins: coins});
+  }).join('');
+
+  root.innerHTML = html;
+},
 
     async renderGuides(full=false,limit=0){
       const idx = await this.fetchIndex(this.cfg.guidesIndex);
@@ -179,7 +230,11 @@
       if(!found){ root.innerHTML='<p style="color:#f87171">Contenu introuvable.</p>'; return; }
 
       const data=found.data;
-      const viewsNow=Views.inc(`${type}:${slug}`);
+      
+let viewsNow = Views.get(`${type}:${slug}`);
+if (shouldCountViewOncePerDay(type, slug)) {
+  viewsNow = Views.inc(`${type}:${slug}`);
+}
 
       const title=data.title||data.name||slug;
       const publisher=(data.publisher||data.studio||data.gameName||'').toUpperCase();
