@@ -1,8 +1,10 @@
-# /.pages.yml — Pages CMS
-
+# /.pages.yml
 media:
   input: "assets/media"
   output: "/assets/media"
+
+# REMPLACE OWNER/REPO/BRANCH si besoin (par défaut : Redstrom/Tools/main)
+x_indexes_base: "https://raw.githubusercontent.com/Redstrom/Tools/main/content/_indexes"
 
 content:
   # ---------------------------
@@ -15,10 +17,10 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{name | slug}}.json"   # slug auto depuis "name"
+    filename: "{{name | slug}}.json"    # slug auto depuis 'name'
     fields:
       - { name: name,  label: "Nom",  type: string }
-      - { name: short, label: "Description courte", type: text,   required: false }
+      - { name: short, label: "Description courte", type: text, required: false }
       - { name: publisher, label: "Éditeur / Studio", type: string, required: false }
       - name: status
         label: "Statut"
@@ -37,19 +39,20 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{title | slug}}.json"  # slug auto depuis "title"
+    filename: "{{title | slug}}.json"   # slug auto
     fields:
       - { name: title, label: "Titre", type: string }
-      # Jeu en liste déroulante (alimentation depuis content/games/index.json)
       - name: gameName
         label: "Jeu"
         type: select
         options:
           fetch:
-            url: "content/games/index.json"
+            url: "{x_indexes_base}/games.json"
             results: "items"
-            value: "name"      # ou "slug" si présent dans tes items
-            label: "{{name}}"  # libellé affiché
+            value: "slug"          # enregistre le slug du jeu
+            label: "{{name}}"      # affiche le nom
+            default: true
+            minlength: 0
       - name: tier
         label: "Tier"
         type: select
@@ -57,8 +60,6 @@ content:
         required: false
       - { name: version, label: "Version", type: string, required: false }
       - { name: summary, label: "Résumé",  type: text,   required: false }
-
-      # Difficulté: texte OU étoiles (1..5). L'UI est bornée; le front borne aussi.
       - name: difficulty
         label: "Difficulté (texte)"
         type: select
@@ -71,9 +72,8 @@ content:
         required: false
       - { name: difficultyStars, label: "Difficulté (étoiles 1..5)", type: number, min: 1, max: 5, step: 1, required: false }
       - { name: cost,            label: "Coût (pièces 0..5)",        type: number, min: 0, max: 5, step: 1, required: false }
-
       - { name: cover,     label: "Cover (16:9)", type: image, required: false }
-      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }
+      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }  # sera écrasé par le workflow
       - { name: body,      label: "Corps (HTML/Markdown)", type: text, required: false }
 
   # ---------------------------
@@ -89,16 +89,17 @@ content:
     filename: "{{title | slug}}.json"
     fields:
       - { name: title, label: "Titre", type: string }
-      # Jeu en dropdown (même source que Builds)
       - name: gameName
         label: "Jeu"
         type: select
         options:
           fetch:
-            url: "content/games/index.json"
+            url: "{x_indexes_base}/games.json"
             results: "items"
-            value: "name"
+            value: "slug"
             label: "{{name}}"
+            default: true
+            minlength: 0
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
       - { name: cover,    label: "Cover (16:9)", type: image, required: false }
@@ -125,15 +126,16 @@ content:
         required: false
       - { name: url,   label: "URL",   type: string, required: false }
       - { name: notes, label: "Notes", type: text,   required: false }
-      # Jeu en dropdown (même source)
       - name: gameName
         label: "Jeu"
         type: select
         options:
           fetch:
-            url: "content/games/index.json"
+            url: "{x_indexes_base}/games.json"
             results: "items"
-            value: "name"
+            value: "slug"
             label: "{{name}}"
+            default: true
+            minlength: 0
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
