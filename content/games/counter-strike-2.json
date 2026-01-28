@@ -1,0 +1,17 @@
+{
+  "name": "Counter-Strike 2",
+  "slug": "counter-strike-2",
+  "status": "actif",
+  "cover": "assets/media/cs2-cover.jpg",
+  "short": "FPS compétitif de Valve.",
+  "platforms": [
+    {
+      "name": "PC"
+    }
+  ],
+  "tags": [
+    {
+      "tag": "FPS"
+    }
+  ]
+}

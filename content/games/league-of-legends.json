@@ -1,0 +1,20 @@
+{
+  "name": "League of Legends",
+  "slug": "league-of-legends",
+  "status": "actif",
+  "cover": "assets/media/lol-cover.jpg",
+  "short": "MOBA compétitif en 5v5.",
+  "platforms": [
+    {
+      "name": "PC"
+    }
+  ],
+  "tags": [
+    {
+      "tag": "MOBA"
+    },
+    {
+      "tag": "Compétitif"
+    }
+  ]
+}
