@@ -1,49 +1,75 @@
-<!doctype html><html lang="fr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Détail – REDSTROM TOOLS</title>
-<link rel="stylesheet" href="index.html" onload="this.remove()">
-<style>
-  .wide{max-width:1000px;margin:0 auto;padding:16px}
-  .hero{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#0f1115}
-  .hero .media{position:relative;aspect-ratio:16/7;overflow:hidden}
-  .hero .media img,.hero .media .media-ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .hero .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,21,.9),rgba(15,17,21,.2))}
-  .hero .meta{position:absolute;bottom:16px;left:16px;right:16px}
-  .hero h1{margin:6px 0 0;font-size:1.8rem}
-  .section h3{margin:18px 0 10px;font-size:1.2rem}
-  .stars,.coins{display:inline-flex;gap:2px;vertical-align:middle}
-  .stars svg,.coins svg{display:block}
-</style>
-</head><body>
-<header>
-  <div class="container hstack" style="height:64px;">
-    index.html" class="hstack" style="gap:12px;text-decoration:none">
-      <div style="width:32px;height:32px;border-radius:8px;background:#22c55e;display:grid;place-items:center;color:#000;font-weight:900">K</div>
-      <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
-    </a>
-    <nav class="hstack" style="gap:16px;margin-left:24px">
-      games.html">Jeux</a>
-      builds.html">Builds</a>
-      guides.html">Guides</a>
-      tools.html">Outils</a>
-    </nav>
-    <div class="spacer"></div>
-  </div>
-</header>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Détail – REDSTROM TOOLS</title>
 
-<main class="wide">
-  <div id="detail-root"></div>
-</main>
+  <!-- Styles (mêmes bases que l’accueil) -->
+  <style>
+    :root{--bg:#0b0c0d;--fg:#e5e7eb;--muted:#9ca3af;--card:#101317;--border:#1f242b;--primary:#22c55e}
+    body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif}
+    a{color:#22c55e;text-decoration:none}a:hover{text-decoration:underline}
+    .container{max-width:1200px;margin:0 auto;padding:0 16px}
+    header{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(11,12,13,.6);border-bottom:1px solid var(--border)}
+    .hstack{display:flex;align-items:center;gap:16px}.spacer{flex:1}
+    nav a{display:inline-flex;padding:10px 8px;border-radius:8px}nav a:hover{background:rgba(255,255,255,.04)}
 
-<script src="loader.cms.js?v=mp2"></script>
-<script>
-  CMS_LOADER && CMS_LOADER.init({
-    page:'detail',
-    gamesIndex:'content/games/index.json',
-    buildsIndex:'content/builds/index.json',
-    guidesIndex:'content/guides/index.json',
-    toolsIndex:'content/tools/index.json',
-    sel:{}, clearHardcode:false
-  });
-</script>
-</body></html>
+    /* Mise en page détail */
+    .wide{max-width:1000px;margin:0 auto;padding:16px}
+    .section{padding:24px 0}
+    .section h3{margin:0 0 10px;font-size:1.2rem}
+
+    /* Hero */
+    .hero{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#0f1115}
+    .hero .media{position:relative;aspect-ratio:16/7;overflow:hidden}
+    .hero .media img,.hero .media .media-ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .hero .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,21,.9),rgba(15,17,21,.2))}
+    .hero .meta{position:absolute;bottom:16px;left:16px;right:16px}
+    .hero h1{margin:6px 0 0;font-size:1.8rem}
+    .badge-pill{display:inline-flex;align-items:center;gap:.25rem;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;background:#00e701;color:#031b09}
+    .publisher{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#22c55e}
+
+    /* Métriques étoiles/pièces */
+    .stars,.coins{display:inline-flex;gap:2px;vertical-align:middle}
+    .stars svg,.coins svg{display:block}
+    .excerpt{color:var(--muted)}
+    .media-ph{background:radial-gradient(1200px 280px at -10% -10%,#1b2330,transparent 40%),radial-gradient(1000px 400px at 110% 110%,#141922,transparent 45%),#0f1115}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container hstack" style="height:64px;">
+      index.html" class="hstack" style="gap:12px;text-decoration:none">
+        <div style="width:32px;height:32px;border-radius:8px;background:#22c55e;display:grid;place-items:center;color:#000;font-weight:900">K</div>
+        <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
+      </a>
+      <nav class="hstack" style="gap:16px;margin-left:24px">
+        <a href="games.html">Jeux</a>
+        <a href="builds.html">Builds</a>
+        <a href="guides.html">Guides</a>
+        <a href="tools.html">Outils</a>
+      </nav>
+
+      <div class="spacer"></div>
+    </div>
+  </header>
+
+  <main class="wide">
+    <div id="detail-root"></div>
+  </main>
+
+  <!-- Charge le loader (cache-bust mp3) -->
+  loader.cms.js?v=mp3"></script>
+  <script>
+    window.CMS_LOADER && window.CMS_LOADER.init({
+      page: 'detail',
+      gamesIndex:  'content/games/index.json',
+      buildsIndex: 'content/builds/index.json',
+      guidesIndex: 'content/guides/index.json',
+      toolsIndex:  'content/tools/index.json',
+      sel: {}, clearHardcode: false
+    });
+  </script>
+</body>
+</html>
