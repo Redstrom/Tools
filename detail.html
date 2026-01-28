@@ -1,0 +1,50 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Détail – REDSTROM TOOLS</title>
+<link rel="stylesheet" href="index.html" onload="this.remove()">
+<style>
+  .wide{max-width:1000px;margin:0 auto;padding:16px}
+  .hero{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#0f1115}
+  .hero .media{position:relative;aspect-ratio:16/7;overflow:hidden}
+  .hero .media img,.hero .media .media-ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,21,.9),rgba(15,17,21,.2))}
+  .hero .meta{position:absolute;bottom:16px;left:16px;right:16px}
+  .hero h1{margin:6px 0 0;font-size:1.8rem}
+  .section h3{margin:18px 0 10px;font-size:1.2rem}
+  .stars,.coins{display:inline-flex;gap:2px;vertical-align:middle}
+  .stars svg,.coins svg{display:block}
+</style>
+</head><body>
+<header>
+  <div class="container hstack" style="height:64px;">
+    index.html" class="hstack" style="gap:12px;text-decoration:none">
+      <div style="width:32px;height:32px;border-radius:8px;background:#22c55e;display:grid;place-items:center;color:#000;font-weight:900">K</div>
+      <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
+    </a>
+    <nav class="hstack" style="gap:16px;margin-left:24px">
+      games.html">Jeux</a>
+      builds.html">Builds</a>
+      guides.html">Guides</a>
+      tools.html">Outils</a>
+    </nav>
+    <div class="spacer"></div>
+  </div>
+</header>
+
+<main class="wide">
+  <div id="detail-root"></div>
+</main>
+
+loader.cms.js?v=mp1"></script>
+<script>
+  CMS_LOADER && CMS_LOADER.init({
+    page: 'detail',
+    gamesIndex:  'content/games/index.json',
+    buildsIndex: 'content/builds/index.json',
+    guidesIndex: 'content/guides/index.json',
+    toolsIndex:  'content/tools/index.json',
+    sel: {}, clearHardcode: false
+  });
+</script>
+</body></html>
+``
