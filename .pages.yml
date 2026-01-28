@@ -1,4 +1,4 @@
-# Pages CMS (.pages.yml)
+# /.pages.yml — Pages CMS
 
 media:
   input: "assets/media"
@@ -15,24 +15,17 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{slug}}.json"
+    filename: "{{name | slug}}.json"   # slug auto depuis "name"
     fields:
       - { name: name,  label: "Nom",  type: string }
-      - { name: slug,  label: "Slug", type: string }
+      - { name: short, label: "Description courte", type: text,   required: false }
+      - { name: publisher, label: "Éditeur / Studio", type: string, required: false }
       - name: status
         label: "Statut"
         type: select
-        options:
-          values:
-            - { label: "Actif",   value: "actif" }
-            - { label: "Archivé", value: "archive" }
+        options: { values: [ { label: "Actif", value: "actif" }, { label: "Archivé", value: "archive" } ] }
         required: false
-      - { name: short,     label: "Description courte", type: text,   required: false }
-      - { name: publisher, label: "Éditeur / Studio",   type: string, required: false }
-      - name: cover
-        label: "Cover (16:9)"
-        type: image
-        required: false
+      - { name: cover, label: "Cover (16:9)", type: image, required: false }
 
   # ---------------------------
   # BUILDS
@@ -44,19 +37,28 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{slug}}.json"
+    filename: "{{title | slug}}.json"  # slug auto depuis "title"
     fields:
       - { name: title, label: "Titre", type: string }
-      - { name: slug,  label: "Slug",  type: string }
-      - { name: gameName, label: "Nom du jeu", type: string, required: false }
+      # Jeu en liste déroulante (alimentation depuis content/games/index.json)
+      - name: gameName
+        label: "Jeu"
+        type: select
+        options:
+          fetch:
+            url: "content/games/index.json"
+            results: "items"
+            value: "name"      # ou "slug" si présent dans tes items
+            label: "{{name}}"  # libellé affiché
       - name: tier
         label: "Tier"
         type: select
-        options:
-          values: ["S","A","B","C"]
+        options: { values: ["S","A","B","C"] }
         required: false
       - { name: version, label: "Version", type: string, required: false }
       - { name: summary, label: "Résumé",  type: text,   required: false }
+
+      # Difficulté: texte OU étoiles (1..5). L'UI est bornée; le front borne aussi.
       - name: difficulty
         label: "Difficulté (texte)"
         type: select
@@ -67,13 +69,11 @@ content:
             - { label: "Difficile", value: "difficile" }
             - { label: "Expert",    value: "expert" }
         required: false
-      - { name: difficultyStars, label: "Difficulté (étoiles 1..5)", type: number, min: 1, max: 5, required: false }
-      - { name: cost,            label: "Coût (pièces 0..5)",        type: number, min: 0, max: 5, required: false }
-      - name: cover
-        label: "Cover (16:9)"
-        type: image
-        required: false
-      - { name: updatedAt, label: "Mise à jour", type: string, required: false }
+      - { name: difficultyStars, label: "Difficulté (étoiles 1..5)", type: number, min: 1, max: 5, step: 1, required: false }
+      - { name: cost,            label: "Coût (pièces 0..5)",        type: number, min: 0, max: 5, step: 1, required: false }
+
+      - { name: cover,     label: "Cover (16:9)", type: image, required: false }
+      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }
       - { name: body,      label: "Corps (HTML/Markdown)", type: text, required: false }
 
   # ---------------------------
@@ -86,25 +86,24 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{slug}}.json"
+    filename: "{{title | slug}}.json"
     fields:
       - { name: title, label: "Titre", type: string }
-      - { name: slug,  label: "Slug",  type: string }
-      - { name: gameName, label: "Nom du jeu", type: string, required: false }
+      # Jeu en dropdown (même source que Builds)
+      - name: gameName
+        label: "Jeu"
+        type: select
+        options:
+          fetch:
+            url: "content/games/index.json"
+            results: "items"
+            value: "name"
+            label: "{{name}}"
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
-      - name: tips
-        label: "Tips"
-        type: list
-        field: { name: tip, label: "Tip", type: string }
-        required: false
-        default: []
-      - name: cover
-        label: "Cover (16:9)"
-        type: image
-        required: false
-      - { name: date, label: "Date", type: string, required: false }
-      - { name: body, label: "Corps (HTML/Markdown)", type: text, required: false }
+      - { name: cover,    label: "Cover (16:9)", type: image, required: false }
+      - { name: date,     label: "Date", type: string, required: false }
+      - { name: body,     label: "Corps (HTML/Markdown)", type: text, required: false }
 
   # ---------------------------
   # OUTILS
@@ -116,21 +115,25 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{slug}}.json"
+    filename: "{{title | slug}}.json"
     fields:
       - { name: title, label: "Titre", type: string }
-      - { name: slug,  label: "Slug",  type: string, required: false }
       - name: kind
         label: "Type"
         type: select
-        options:
-          values: ["Overlay","Plugin","Site","Autre"]
+        options: { values: ["Overlay","Plugin","Site","Autre"] }
         required: false
       - { name: url,   label: "URL",   type: string, required: false }
       - { name: notes, label: "Notes", type: text,   required: false }
-      - { name: gameName, label: "Nom du jeu", type: string, required: false }
-      - name: cover
-        label: "Cover (16:9)"
-        type: image
-        required: false
-      - { name: body, label: "Corps (HTML/Markdown)", type: text, required: false }
+      # Jeu en dropdown (même source)
+      - name: gameName
+        label: "Jeu"
+        type: select
+        options:
+          fetch:
+            url: "content/games/index.json"
+            results: "items"
+            value: "name"
+            label: "{{name}}"
+      - { name: cover, label: "Cover (16:9)", type: image, required: false }
+      - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
