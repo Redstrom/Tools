@@ -243,7 +243,7 @@
         const slug=g.slug||(g.name||'').toLowerCase().replace(/\s+/g,'-');
         const href=g._href||'#', key=`game:${slug}`, views=g._views||0;
         const publisher=(g.publisher||CMS.tpl.inferPublisherFromName(g.name)).toUpperCase();
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        return `<a href="${href}" class="card--game">
           <div class="card-media">
             ${g.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(g.cover), g.name):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -254,7 +254,7 @@
             <div class="title">${g.name||''}</div>
             ${g.short?`<p class="excerpt">${g.short}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
@@ -264,7 +264,7 @@
         const starRow=Array.from({length:5},(_,i)=> i<(b._stars||3)?ICONS.starFilled:ICONS.starEmpty).join('');
         const coinRow=Array.from({length:5},(_,i)=> i<(b._coins||0)?ICONS.coinFilled:ICONS.coinEmpty).join('');
         const publisher=(b.publisher||CMS.tpl.inferPublisherFromName(b.gameName||'')).toUpperCase();
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        return `<a href="${href}" class="card--game">
           <div class="card-media">
             ${b.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(b.cover), b.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -276,7 +276,7 @@
             ${b.summary?`<p class="excerpt">${b.summary}</p>`:''}
           </div>
           <div class="card-foot">
-            <span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span>
+            <span class="metric"><span class="icon">${ICONS.eye}</span><span>${views.toLocaleString('fr-FR')}</span></span>
             <span class="metric">${starRow}</span>
             <span class="metric">${coinRow}</span>
           </div>
@@ -286,7 +286,7 @@
       guideCard(x){
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=x._href||'#', key=`guide:${slug}`, views=x._views||0;
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        return `<a href="${href}" class="card--game">
           <div class="card-media">
             ${x.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(x.cover), x.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -297,14 +297,14 @@
             ${x.resource?`<p class="excerpt">Ressource : <strong>${x.resource}</strong></p>`:''}
             ${x.route?`<p class="excerpt">${x.route}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
       toolCard(t){
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=t._href||'#', key=`tool:${slug}`, views=t._views||0;
-        return `<a href="${href}" class="card--game" data-viewkey="${key}">
+        return `<a href="${href}" class="card--game">
           <div class="card-media">
             ${t.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(t.cover), t.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -315,7 +315,7 @@
             ${t.gameName?`<div class="publisher" style="margin-top:2px;">${(t.gameName||'').toUpperCase()}</div>`:''}
             ${t.notes?`<p class="excerpt" style="margin-top:6px;">${t.notes}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       }
     }
