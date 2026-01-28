@@ -110,38 +110,81 @@
       });
     },
     parseQuery(){const u=new URL(location.href);return{type:u.searchParams.get('type')||'game',slug:u.searchParams.get('slug')||''};},
-    async renderDetail(){
-      const {type,slug}=this.parseQuery(); const folder={game:'games',build:'builds',guide:'guides',tool:'tools'}[type]||'games';
-      const url=this.cfg.basePrefix+`content/${folder}/${slug}.json`; const data=await this.fetchJSON(url);
-      const root=document.getElementById('detail-root'); if(!data){root.innerHTML='<p style="color:#f87171">Contenu introuvable.</p>';return;}
-      const viewsNow=Views.inc(`${type}:${slug}`); const cover=data.cover?this.normalizeAsset(data.cover):''; const status=data.status||(type==='build'&&data.tier)||'Actif';
-      const title=data.title||data.name||slug; const publisher=(data.publisher||data.studio||data.gameName||'').toUpperCase();
-      const head = `
-        <div class="hero">
-          <div class="media">
-            ${cover ? `<img src="${cover}" alt="${title}">` : '<div class="media-ph"></div>'}
-            <div class="overlay"></div>
-            <div class="meta">
-              <span class="badge-pill">${status}</span>
-              ${publisher? `<div class="publisher" style="margin-top:8px">${publisher}</div>`:''}
-              <h1>${title}</h1>
-            </div>
-          </div>
+async renderDetail(){
+  const u = new URL(location.href);
+  const type = u.searchParams.get('type') || 'game';
+  const slug = u.searchParams.get('slug') || '';
+  const folder = { game:'games', build:'builds', guide:'guides', tool:'tools' }[type] || 'games';
+
+  // charge le JSON de l'item
+  const url = this.cfg.basePrefix + `content/${folder}/${slug}.json`;
+  const data = await this.fetchJSON(url);
+  const root = document.getElementById('detail-root');
+  if (!data) { root.innerHTML = '<p style="color:#f87171">Contenu introuvable.</p>'; return; }
+
+  // incrémente la vue
+  const viewsNow = (()=>{
+    try { return Views.inc(`${type}:${slug}`); } catch(_) { return 1; }
+  })();
+
+  // hero (image ou placeholder)
+  const title = data.title || data.name || slug;
+  const publisher = (data.publisher || data.studio || data.gameName || '').toUpperCase();
+  const status = data.status || (type==='build' && data.tier) || 'Actif';
+  const coverHtml = data.cover
+    ? this.tpl.imgBlock(this.normalizeAsset(data.cover), title)   // <<< assure un vrai <img ...>
+    : '<div class="media-ph"></div>';
+
+  const head = `
+    <div class="hero">
+      <div class="media">
+        ${coverHtml}
+        <div class="overlay"></div>
+        <div class="meta">
+          <span class="badge-pill">${status}</span>
+          ${publisher ? `<div class="publisher" style="margin-top:8px">${publisher}</div>` : ''}
+          <h1>${title}</h1>
         </div>
-        <div style="margin:10px 0 6px;color:#9ca3af">${ICONS.eye}<span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>`;
-      let body='';
-      if(type==='build'){
-        const stars=data.difficultyStars||this.starsFromDifficulty(data.difficulty);
-        const coins=Math.max(0,Math.min(5,parseInt(data.cost||0,10)));
-        const starRow=Array.from({length:5},(_,i)=>ICONS.star(i<stars)).join('');
-        const coinRow=Array.from({length:5},(_,i)=>ICONS.coin(i<coins)).join('');
-        body+=`<section class="section"><h3>Difficulté</h3><div class="stars">${starRow}</div></section>
-               <section class="section"><h3>Coût</h3><div class="coins">${coinRow}</div></section>`;
-      }
-      if(data.body){ body+=`<section class="section"><h3>Détails</h3><div class="excerpt">${data.body}</div></section>`; }
-      else if(data.short){ body+=`<section class="section"><h3>Description</h3><div class="excerpt">${data.short}</div></section>`; }
-      root.innerHTML=head+body;
-    },
+      </div>
+    </div>
+    <div style="margin:10px 0 6px;color:#9ca3af">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>
+      <span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span>
+    </div>
+  `;
+
+  let body = '';
+  if (type === 'build') {
+    // étoiles/coûts bornés 1..5 et 0..5
+    const stars = Math.max(1, Math.min(5, parseInt(data.difficultyStars ?? 0, 10) || (
+      /facile/i.test(data.difficulty||'') ? 2 :
+      /moyen/i.test(data.difficulty||'')  ? 3 :
+      /diffic/i.test(data.difficulty||'') ? 4 :
+      /expert/i.test(data.difficulty||'') ? 5 : 3
+    )));
+    const coins = Math.max(0, Math.min(5, parseInt(data.cost ?? 0, 10) || 0));
+    const STAR = f => f ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>' :
+                          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>';
+    const COIN = f => f ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>' :
+                          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>';
+    body += `
+      <section class="section"><h3>Difficulté</h3>
+        <div class="stars">${Array.from({length:5},(_,i)=>STAR(i<stars)).join('')}</div>
+      </section>
+      <section class="section"><h3>Coût</h3>
+        <div class="coins">${Array.from({length:5},(_,i)=>COIN(i<coins)).join('')}</div>
+      </section>
+    `;
+  }
+
+  if (data.body) {
+    body += `<section class="section"><h3>Détails</h3><div class="excerpt">${data.body}</div></section>`;
+  } else if (data.short) {
+    body += `<section class="section"><h3>Description</h3><div class="excerpt">${data.short}</div></section>`;
+  }
+
+  root.innerHTML = head + body;
+},
     tpl:{
       imgBlock(src,alt){ if(src){const r=CMS.normalizeAsset(src);return `<img src="${r}" alt="${(alt||'').replace(/"/g,'&quot;')}" class="h-full w-full object-cover">`; } return '<div class="media-ph"></div>'; },
       badge(t,cls='badge-pill'){return `<span class="${cls}">${t}</span>`;},
