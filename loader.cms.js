@@ -1,5 +1,5 @@
 (function () {
-  console.log('[CMS] loader v7');
+  console.log('[CMS] loader v8');
 
   const ICONS = {
     eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>',
@@ -26,37 +26,60 @@
       this.cfg.basePrefix = parts.length>0 ? `/${parts[0]}/` : '/';
       this.cfg = Object.assign({}, this.cfg, userCfg||{});
       const norm = p => !p ? '' : /^https?:\/\//i.test(p) ? p : (p.startsWith('/') ? p.replace(/^\//, this.cfg.basePrefix) : this.cfg.basePrefix + p);
-      this.cfg.gamesIndex  = norm(this.cfg.gamesIndex  || 'content/_indexes/games.json');
-      this.cfg.buildsIndex = norm(this.cfg.buildsIndex || 'content/_indexes/builds.json');
-      this.cfg.guidesIndex = norm(this.cfg.guidesIndex || 'content/_indexes/guides.json');
-      this.cfg.toolsIndex  = norm(this.cfg.toolsIndex  || 'content/_indexes/tools.json');
+
+      // ne force pas _indexes par défaut – on respectera ce que tu passes depuis la page
+      this.cfg.gamesIndex  = norm(this.cfg.gamesIndex  || 'content/games/index.json');
+      this.cfg.buildsIndex = norm(this.cfg.buildsIndex || 'content/builds/index.json');
+      this.cfg.guidesIndex = norm(this.cfg.guidesIndex || 'content/guides/index.json');
+      this.cfg.toolsIndex  = norm(this.cfg.toolsIndex  || 'content/tools/index.json');
+
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>this.run());
       else this.run();
     },
 
     normalizeAsset(src){ if(!src) return ''; if(/^https?:\/\//i.test(src)) return src; return src.startsWith('/')?src.replace(/^\//,this.cfg.basePrefix):this.cfg.basePrefix+src; },
-    async fetchJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(r.status); const j=await r.json(); return Array.isArray(j)?{items:j}:j; }catch(e){ console.warn('[CMS] fetch failed',url,e); return null; } },
+
+    async fetchJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(r.status); const j=await r.json(); return Array.isArray(j)?{items:j}:j; }catch(e){ return null; } },
+
+    async fetchIndexWithFallback(primaryUrl, fallbackUrl){
+      const a = await this.fetchJSON(primaryUrl);
+      if (a?.items?.length) return a;
+      const b = await this.fetchJSON(fallbackUrl);
+      return b?.items ? b : { items: [] };
+    },
+
     clear(sel){ if(!this.cfg.clearHardcode) return; const el=document.querySelector(sel); if(el) el.innerHTML=''; },
 
     async run(){
       switch(this.cfg.page){
-        case 'home': break;
-        case 'games': await this.renderGames(true);  break;
-        case 'builds':await this.renderBuilds(true); break;
-        case 'guides':await this.renderGuides(true); break;
-        case 'tools': await this.renderTools(true);  break;
-        case 'detail':await this.renderDetail();     break;
+        case 'home': break; // landing : rien à lister
+        case 'games':  await this.renderGames(true);  break;
+        case 'builds': await this.renderBuilds(true); break;
+        case 'guides': await this.renderGuides(true); break;
+        case 'tools':  await this.renderTools(true);  break;
+        case 'detail': await this.renderDetail();     break;
       }
       this.bindClicksForViews();
     },
 
+    // ------- LISTES -------
     async renderGames(full=false,limit=0){
-      const [gamesIdx, buildsIdx, toolsIdx] = await Promise.all([
-        this.fetchJSON(this.cfg.gamesIndex), this.fetchJSON(this.cfg.buildsIndex), this.fetchJSON(this.cfg.toolsIndex)
-      ]);
-      const items = gamesIdx?.items || [];
-      const byGame = list => { const m=new Map(); (list?.items||[]).forEach(it=>{ const key=(it.gameName||it.name||'').toLowerCase(); m.set(key,(m.get(key)||0)+1); }); return m; };
-      const buildsCount = byGame(buildsIdx), toolsCount=byGame(toolsIdx);
+      const games = await this.fetchIndexWithFallback(
+        this.cfg.gamesIndex,
+        this.cfg.basePrefix + 'content/games/index.json'
+      );
+      const builds = await this.fetchIndexWithFallback(
+        this.cfg.buildsIndex,
+        this.cfg.basePrefix + 'content/builds/index.json'
+      );
+      const tools  = await this.fetchIndexWithFallback(
+        this.cfg.toolsIndex,
+        this.cfg.basePrefix + 'content/tools/index.json'
+      );
+
+      const items = games.items || [];
+      const byGame = list => { const m=new Map(); (list.items||[]).forEach(it=>{ const key=(it.gameName||it.name||'').toLowerCase(); m.set(key,(m.get(key)||0)+1); }); return m; };
+      const buildsCount = byGame(builds), toolsCount=byGame(tools);
 
       this.clear(this.cfg.sel.games);
       const root=document.querySelector(this.cfg.sel.games); if(!root) return;
@@ -74,7 +97,11 @@
       const n=parseInt(diff,10); return isFinite(n)?Math.max(1,Math.min(5,n)):3; },
 
     async renderBuilds(full=false,limit=0){
-      const idx=await this.fetchJSON(this.cfg.buildsIndex); const items=idx?.items||[];
+      const idx = await this.fetchIndexWithFallback(
+        this.cfg.buildsIndex,
+        this.cfg.basePrefix + 'content/builds/index.json'
+      );
+      const items = idx.items || [];
       this.clear(this.cfg.sel.builds); const root=document.querySelector(this.cfg.sel.builds); if(!root) return;
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(b=>{
         const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
@@ -87,7 +114,11 @@
     },
 
     async renderGuides(full=false,limit=0){
-      const idx=await this.fetchJSON(this.cfg.guidesIndex); const items=idx?.items||[];
+      const idx = await this.fetchIndexWithFallback(
+        this.cfg.guidesIndex,
+        this.cfg.basePrefix + 'content/guides/index.json'
+      );
+      const items = idx.items || [];
       this.clear(this.cfg.sel.guides); const root=document.querySelector(this.cfg.sel.guides); if(!root) return;
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(x=>{
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
@@ -98,7 +129,11 @@
     },
 
     async renderTools(full=false,limit=0){
-      const idx=await this.fetchJSON(this.cfg.toolsIndex); const items=idx?.items||[];
+      const idx = await this.fetchIndexWithFallback(
+        this.cfg.toolsIndex,
+        this.cfg.basePrefix + 'content/tools/index.json'
+      );
+      const items = idx.items || [];
       this.clear(this.cfg.sel.tools); const root=document.querySelector(this.cfg.sel.tools); if(!root) return;
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(t=>{
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
@@ -108,6 +143,7 @@
       }).join('');
     },
 
+    // ------- DÉTAIL -------
     async renderDetail(){
       const u=new URL(location.href);
       const type=u.searchParams.get('type')||'game';
@@ -115,10 +151,26 @@
       const folder={game:'games',build:'builds',guide:'guides',tool:'tools'}[type]||'games';
       const root=document.getElementById('detail-root');
 
+      // essaie le fichier direct
       const tryFile = async()=>{ const url=this.cfg.basePrefix+`content/${folder}/${slug}.json`; const j=await this.fetchJSON(url); return j?{data:j}:null; };
-      const tryIndex=async()=>{ const map={game:this.cfg.gamesIndex,build:this.cfg.buildsIndex,guide:this.cfg.guidesIndex,tool:this.cfg.toolsIndex}; const idx=await this.fetchJSON(map[type]); if(!idx?.items) return null; const hit=idx.items.find(x=>(x.slug||'').toLowerCase()===slug.toLowerCase()); return hit?{data:hit}:null; };
 
-      const found=(await tryFile())||(await tryIndex());
+      // sinon retombe sur l’index (fallback _indexes OU contenu “classique”)
+      const tryIndex = async()=>{
+        const map={game:[this.cfg.gamesIndex,  this.cfg.basePrefix+'content/games/index.json' ],
+                   build:[this.cfg.buildsIndex, this.cfg.basePrefix+'content/builds/index.json'],
+                   guide:[this.cfg.guidesIndex, this.cfg.basePrefix+'content/guides/index.json'],
+                   tool: [this.cfg.toolsIndex,  this.cfg.basePrefix+'content/tools/index.json' ]}[type];
+        for (const url of map){
+          const idx = await this.fetchJSON(url);
+          if (idx?.items) {
+            const hit = idx.items.find(x=>(x.slug||'').toLowerCase()===slug.toLowerCase());
+            if (hit) return {data: hit};
+          }
+        }
+        return null;
+      };
+
+      const found = (await tryFile()) || (await tryIndex());
       if(!found){ root.innerHTML='<p style="color:#f87171">Contenu introuvable.</p>'; return; }
 
       const data=found.data;
@@ -165,9 +217,10 @@
       });
     },
 
+    // ------- Templates -------
     tpl:{
       imgBlock(src,alt){
-        return `<img src="${src}" alt="${(alt||'').replace(/"/g,'&quot;')}" class="h-full w-full object-cover">`;
+        return `${src}" alt="${(alt||'').replace(/"/g,'&quot;')}" class="h-full w-full object-cover">`;
       },
       badge(t,cls='badge-pill'){ return `<span class="${cls}">${t}</span>`; },
       inferPublisherFromName(n=''){ n=n.toLowerCase(); if(n.includes('counter-strike')||n.includes('cs'))return'VALVE'; if(n.includes('league of legends')||n.includes('lol'))return'RIOT GAMES'; if(n.includes('valorant'))return'RIOT GAMES'; return''; },
@@ -187,7 +240,9 @@
             <div class="title">${g.name||''}</div>
             ${g.short?`<p class="excerpt">${g.short}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric">${ICONS.eye}<span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot">
+            <span class="metric">${ICONS.eye}<span data-views>${views.toLocaleString('fr-FR')}</span></span>
+          </div>
         </a>`;
       },
 
@@ -225,7 +280,8 @@
             <div class="media-grad"></div>
             ${x.gameName?`<div style="position:absolute;bottom:10px;left:12px;" class="publisher">${(x.gameName||'').toUpperCase()}</div>`:''}
           </div>
-          <div class="card-body"><div class="title">${x.title||''}</div>
+          <div class="card-body">
+            <div class="title">${x.title||''}</div>
             ${x.resource?`<p class="excerpt">Ressource : <strong>${x.resource}</strong></p>`:''}
             ${x.route?`<p class="excerpt">${x.route}</p>`:''}
           </div>
