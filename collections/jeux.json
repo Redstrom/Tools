@@ -1,23 +1,53 @@
-[
-  {
-    "id": 1,
-    "title": "Aegis Arena",
-    "url": "/jeux/aegis-arena",
-    "image": "/assets/jeux/aegis-arena.jpg",
-    "excerpt": "Arena shooter tactique en 3v3."
-  },
-  {
-    "id": 2,
-    "title": "Mystic Vale",
-    "url": "/jeux/mystic-vale",
-    "image": "/assets/jeux/mystic-vale.jpg",
-    "excerpt": "Deckbuilding rapide et nerveux."
-  },
-  {
-    "id": 3,
-    "title": "Orbital Drift",
-    "url": "/jeux/orbital-drift",
-    "image": "/assets/jeux/orbital-drift.jpg",
-    "excerpt": "Course anti-gravité en solo/online."
-  }
-]
+{
+  "name": "games",
+  "label": "Jeux",
+  "type": "directory",
+  "path": "content/games",
+  "create": true,
+  "format": "json",
+  "extension": "json",
+  "slug": "{{slug}}",
+  "fields": [
+    { "name": "name",  "label": "Nom",  "type": "string" },
+    { "name": "slug",  "label": "Slug", "type": "string" },
+
+    {
+      "name": "status",
+      "label": "Statut",
+      "type": "select",
+      "options": {
+        "values": [
+          { "label": "Actif",   "value": "actif" },
+          { "label": "Archivé", "value": "archive" }
+        ]
+      },
+      "required": false,
+      "default": "actif"
+    },
+
+    {
+      "name": "cover",
+      "label": "Cover (16:9)",
+      "type": "image",
+      "directory": "assets/media/games",
+      "publicPath": "/assets/media/games",
+      "required": false
+    },
+
+    { "name": "short",     "label": "Description courte", "type": "text",   "required": false },
+    { "name": "publisher", "label": "Éditeur / Studio",   "type": "string", "required": false },
+
+    {
+      "name": "tags",
+      "label": "Tags",
+      "type": "list",
+      "field": { "name": "tag", "label": "Tag", "type": "string" },
+      "required": false,
+      "default": []
+    },
+
+    { "name": "players", "label": "Players", "type": "string", "required": false },
+    { "name": "servers", "label": "Servers", "type": "string", "required": false },
+    { "name": "trend",   "label": "Trend",   "type": "string", "required": false }
+  ]
+}
