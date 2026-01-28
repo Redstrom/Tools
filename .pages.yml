@@ -1,15 +1,13 @@
-# /.pages.yml
+# /.pages.yml — Pages CMS (site: redstrom.github.io/Tools)
+
 media:
   input: "assets/media"
   output: "/assets/media"
 
-# REMPLACE OWNER/REPO/BRANCH si besoin (par défaut : Redstrom/Tools/main)
-x_indexes_base: "https://raw.githubusercontent.com/Redstrom/Tools/main/content/_indexes"
-
 content:
-  # ---------------------------
+  # =========================
   # JEUX
-  # ---------------------------
+  # =========================
   - name: games
     label: "Jeux"
     type: collection
@@ -17,10 +15,10 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{name | slug}}.json"    # slug auto depuis 'name'
+    filename: "{{name | slug}}.json"           # slug auto depuis "name"
     fields:
       - { name: name,  label: "Nom",  type: string }
-      - { name: short, label: "Description courte", type: text, required: false }
+      - { name: short, label: "Description courte", type: text,   required: false }
       - { name: publisher, label: "Éditeur / Studio", type: string, required: false }
       - name: status
         label: "Statut"
@@ -29,9 +27,9 @@ content:
         required: false
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
 
-  # ---------------------------
+  # =========================
   # BUILDS
-  # ---------------------------
+  # =========================
   - name: builds
     label: "Builds"
     type: collection
@@ -39,27 +37,33 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{title | slug}}.json"   # slug auto
+    filename: "{{title | slug}}.json"          # slug auto depuis "title"
     fields:
       - { name: title, label: "Titre", type: string }
+
+      # Jeu en liste déroulante (chargée depuis l’index public du site)
       - name: gameName
         label: "Jeu"
         type: select
         options:
           fetch:
-            url: "{x_indexes_base}/games.json"
-            results: "items"
-            value: "slug"          # enregistre le slug du jeu
-            label: "{{name}}"      # affiche le nom
+            url: "https://redstrom.github.io/Tools/content/_indexes/games.json"
+            results: "items"        # tableau d’items
+            value: "slug"           # on stocke le slug du jeu
+            label: "{{name}}"       # on affiche le nom du jeu
             default: true
             minlength: 0
+
       - name: tier
         label: "Tier"
         type: select
         options: { values: ["S","A","B","C"] }
         required: false
+
       - { name: version, label: "Version", type: string, required: false }
       - { name: summary, label: "Résumé",  type: text,   required: false }
+
+      # Difficulté et coût (bornés dans l’UI)
       - name: difficulty
         label: "Difficulté (texte)"
         type: select
@@ -72,13 +76,14 @@ content:
         required: false
       - { name: difficultyStars, label: "Difficulté (étoiles 1..5)", type: number, min: 1, max: 5, step: 1, required: false }
       - { name: cost,            label: "Coût (pièces 0..5)",        type: number, min: 0, max: 5, step: 1, required: false }
+
       - { name: cover,     label: "Cover (16:9)", type: image, required: false }
-      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }  # sera écrasé par le workflow
+      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }  # auto-ajustée par workflow
       - { name: body,      label: "Corps (HTML/Markdown)", type: text, required: false }
 
-  # ---------------------------
+  # =========================
   # GUIDES
-  # ---------------------------
+  # =========================
   - name: guides
     label: "Guides"
     type: collection
@@ -94,7 +99,7 @@ content:
         type: select
         options:
           fetch:
-            url: "{x_indexes_base}/games.json"
+            url: "https://redstrom.github.io/Tools/content/_indexes/games.json"
             results: "items"
             value: "slug"
             label: "{{name}}"
@@ -106,9 +111,9 @@ content:
       - { name: date,     label: "Date", type: string, required: false }
       - { name: body,     label: "Corps (HTML/Markdown)", type: text, required: false }
 
-  # ---------------------------
+  # =========================
   # OUTILS
-  # ---------------------------
+  # =========================
   - name: tools
     label: "Outils"
     type: collection
@@ -126,16 +131,18 @@ content:
         required: false
       - { name: url,   label: "URL",   type: string, required: false }
       - { name: notes, label: "Notes", type: text,   required: false }
+
       - name: gameName
         label: "Jeu"
         type: select
         options:
           fetch:
-            url: "{x_indexes_base}/games.json"
+            url: "https://redstrom.github.io/Tools/content/_indexes/games.json"
             results: "items"
             value: "slug"
             label: "{{name}}"
             default: true
             minlength: 0
+
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
