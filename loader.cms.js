@@ -2,9 +2,20 @@
   // =========================
   // CONFIG & VERSIONING
   // =========================
-  const VERSION = 'v10.0';
+  const VERSION = 'v10.1';
   const FILE    = 'loader.cms.js';
   console.log(`[CMS] ${FILE} ${VERSION}`);
+
+  // =========================
+  // ICONS (disponible partout)
+  // =========================
+  const ICONS = {
+    eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>',
+    starFilled:'<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
+    starEmpty:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
+    coinFilled:'<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>',
+    coinEmpty:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>'
+  };
 
   // =========================
   // Vues (localStorage)
@@ -187,7 +198,7 @@
             </div>
           </div>
         </div>
-        <div style="margin:10px 0 6px;color:#9ca3af"><span class="icon">${CMS.ICONS.eye}</span><span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>
+        <div style="margin:10px 0 6px;color:#9ca3af"><span class="icon">${ICONS.eye}</span><span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>
       `;
 
       let body='';
@@ -196,10 +207,10 @@
         const coins=Math.max(0,Math.min(5, parseInt(data.cost??0,10)||0));
         body+=`
           <section class="section"><h3>Difficulté</h3><div class="stars">${
-            Array.from({length:5},(_,i)=> i<stars?CMS.ICONS.starFilled:CMS.ICONS.starEmpty).join('')
+            Array.from({length:5},(_,i)=> i<stars?ICONS.starFilled:ICONS.starEmpty).join('')
           }</div></section>
           <section class="section"><h3>Coût</h3><div class="coins">${
-            Array.from({length:5},(_,i)=> i<coins?CMS.ICONS.coinFilled:CMS.ICONS.coinEmpty).join('')
+            Array.from({length:5},(_,i)=> i<coins?ICONS.coinFilled:ICONS.coinEmpty).join('')
           }</div></section>`;
       }
       if(data.body) body+=`<section class="section"><h3>Détails</h3><div class="excerpt">${data.body}</div></section>`;
@@ -222,11 +233,11 @@
 
     // ---------------- Templates ----------------
     tpl:{
-      // TOUJOURS un <img> ou un placeholder (finis les URL en texte)
+      // TOUJOURS un <img> (ou un placeholder)
       imgBlock(src, alt){
         const safeAlt = (alt || '').replace(/"/g,'&quot;');
         if (!src) return '<div class="media-ph"></div>';
-        return `${src}`;
+        return `${src}" alt="${safeAlt}" class="h-full w-full object-cover">`;
       },
 
       badge(t,cls='badge-pill'){ return `<span class="${cls}">${t}</span>`; },
@@ -239,7 +250,7 @@
         return '';
       },
 
-      // Cartes : un vrai <a href="…"> … </a> qui **encapsule** la carte
+      // Cartes : un vrai <a …> … </a> qui **encapsule** la carte
       gameCard(g){
         const slug=g.slug||(g.name||'').toLowerCase().replace(/\s+/g,'-');
         const href=g._href||'#', key=`game:${slug}`, views=g._views||0;
@@ -255,15 +266,15 @@
             <div class="title">${g.name||''}</div>
             ${g.short?`<p class="excerpt">${g.short}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
       buildCard(b){
         const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=b._href||'#', key=`build:${slug}`, views=b._views||0;
-        const starRow=Array.from({length:5},(_,i)=> i<(b._stars||3)?CMS.ICONS.starFilled:CMS.ICONS.starEmpty).join('');
-        const coinRow=Array.from({length:5},(_,i)=> i<(b._coins||0)?CMS.ICONS.coinFilled:CMS.ICONS.coinEmpty).join('');
+        const starRow=Array.from({length:5},(_,i)=> i<(b._stars||3)?ICONS.starFilled:ICONS.starEmpty).join('');
+        const coinRow=Array.from({length:5},(_,i)=> i<(b._coins||0)?ICONS.coinFilled:ICONS.coinEmpty).join('');
         const publisher=(b.publisher||CMS.tpl.inferPublisherFromName(b.gameName||'')).toUpperCase();
         return `<a href="${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
@@ -277,7 +288,7 @@
             ${b.summary?`<p class="excerpt">${b.summary}</p>`:''}
           </div>
           <div class="card-foot">
-            <span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span>
+            <span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span>
             <span class="metric">${starRow}</span>
             <span class="metric">${coinRow}</span>
           </div>
@@ -298,7 +309,7 @@
             ${x.resource?`<p class="excerpt">Ressource : <strong>${x.resource}</strong></p>`:''}
             ${x.route?`<p class="excerpt">${x.route}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
@@ -316,17 +327,8 @@
             ${t.gameName?`<div class="publisher" style="margin-top:2px;">${(t.gameName||'').toUpperCase()}</div>`:''}
             ${t.notes?`<p class="excerpt" style="margin-top:6px;">${t.notes}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric"><span class="icon">${CMS.ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
-      },
-
-      // ICONS (namespace)
-      ICONS:{
-        eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>',
-        starFilled:'<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
-        starEmpty:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
-        coinFilled:'<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>',
-        coinEmpty:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>'
       }
     }
   };
