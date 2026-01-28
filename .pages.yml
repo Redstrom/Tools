@@ -170,3 +170,4 @@ collections:
         public_folder: "/assets/media/tools"
         required: false
       - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
+``
