@@ -1,37 +1,32 @@
 (function () {
   // =========================
-  //  CONFIG & VERSIONING
+  // CONFIG & VERSIONING
   // =========================
-  const VERSION = 'v9.1';  // <-- tu changes ça SEULEMENT quand tu veux
+  const VERSION = 'v9.2';
   const FILE    = 'loader.cms.js';
-  const UPDATE  = { check: true, forceReload: false }; // forceReload=true => recharge auto si ETag change
-
+  const UPDATE  = { check: true, forceReload: false }; // rechargement auto si activé
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
-  // -------------------------
-  //  Auto-update via ETag
-  // -------------------------
+  // ------ Auto-update via ETag (optionnel) ------
   (async function selfUpdatePing(){
     if (!UPDATE.check) return;
     try {
-      const res = await fetch(FILE + '?_ping=' + Date.now(), { cache: 'no-store' });
+      const res  = await fetch(FILE + '?_ping=' + Date.now(), { cache: 'no-store' });
       const etag = res.headers.get('etag') || res.headers.get('x-amz-version-id') || '';
       const key  = 'cms_loader_etag';
       const prev = localStorage.getItem(key) || '';
       if (etag && prev && etag !== prev) {
-        const msg = `[CMS] Nouvelle version détectée (${etag.slice(0,8)} != ${prev.slice(0,8)}). ` +
-                    (UPDATE.forceReload ? 'Reload...' : 'Ctrl+F5 pour recharger le loader.');
+        const msg = `[CMS] Nouvelle version détectée (${etag.slice(0,8)} != ${prev.slice(0,8)}). `
+                  + (UPDATE.forceReload ? 'Reload…' : 'Ctrl+F5 pour recharger le loader.');
         console.warn(msg);
         if (UPDATE.forceReload) location.reload(true);
       }
       if (etag) localStorage.setItem(key, etag);
-    } catch (_) {
-      // silencieux
-    }
+    } catch {}
   })();
 
   // =========================
-  //  UTIL: vues (localStorage)
+  // UTIL: vues (localStorage)
   // =========================
   const Views = {
     key:k=>`view:${k}`,
@@ -41,7 +36,7 @@
   };
 
   // =========================
-  //  CMS Loader (auto-init)
+  // CMS Loader (auto-init)
   // =========================
   const CMS = {
     cfg:{
@@ -67,7 +62,6 @@
       const hinted = document.querySelector('meta[name="cms:page"]')?.content?.trim();
       this.cfg.page = hinted || this.autodetectPage();
 
-      // go
       if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>this.run());
       else this.run();
     },
@@ -89,7 +83,7 @@
 
     async fetchJSON(url){
       try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(r.status); const j=await r.json(); return Array.isArray(j)?{items:j}:j; }
-      catch(_){ return null; }
+      catch{ return null; }
     },
 
     async fetchIndex(url){ return (await this.fetchJSON(url)) || { items: [] }; },
@@ -212,17 +206,24 @@
             </div>
           </div>
         </div>
-        <div style="margin:10px 0 6px;color:#9ca3af">${ICONS.eye}<span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>
+        <div style="margin:10px 0 6px;color:#9ca3af"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg><span style="margin-left:6px">${viewsNow.toLocaleString('fr-FR')} vues</span></div>
       `;
 
       let body='';
       if(type==='build'){
         const stars=Math.max(1,Math.min(5, parseInt(data.difficultyStars??0,10) || this.starsFromDifficulty(data.difficulty)));
         const coins=Math.max(0,Math.min(5, parseInt(data.cost??0,10)||0));
-        const STAR=f=>ICONS.star(f), COIN=f=>ICONS.coin(f);
+        const STAR=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>';
+        const STAR_O=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>';
+        const COIN=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>';
+        const COIN_O=f=>'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>';
         body+=`
-          <section class="section"><h3>Difficulté</h3><div class="stars">${Array.from({length:5},(_,i)=>STAR(i<stars)).join('')}</div></section>
-          <section class="section"><h3>Coût</h3><div class="coins">${Array.from({length:5},(_,i)=>COIN(i<coins)).join('')}</div></section>`;
+          <section class="section"><h3>Difficulté</h3><div class="stars">${
+            Array.from({length:5},(_,i)=> i<stars?STAR():STAR_O()).join('')
+          }</div></section>
+          <section class="section"><h3>Coût</h3><div class="coins">${
+            Array.from({length:5},(_,i)=> i<coins?COIN():COIN_O()).join('')
+          }</div></section>`;
       }
       if(data.body) body+=`<section class="section"><h3>Détails</h3><div class="excerpt">${data.body}</div></section>`;
       else if(data.short) body+=`<section class="section"><h3>Description</h3><div class="excerpt">${data.short}</div></section>`;
@@ -244,12 +245,15 @@
 
     // -------- Templates --------
     tpl:{
+      // ✅ TOUJOURS un <img> ou un placeholder (jamais du texte brut)
       imgBlock(src, alt){
         const safeAlt = (alt || '').replace(/"/g,'&quot;');
         if (!src) return '<div class="media-ph"></div>';
-        return `${src}" alt="${safeAlt}" class="h-full w-full object-cover">`;
+        return `<img src="${src}" alt="${safeAlt}" class="h-full w-full object-cover">`;
       },
+
       badge(t,cls='badge-pill'){ return `<span class="${cls}">${t}</span>`; },
+
       inferPublisherFromName(n=''){
         n=n.toLowerCase();
         if(n.includes('counter-strike')||n.includes('cs')) return 'VALVE';
@@ -260,10 +264,9 @@
 
       gameCard(g){
         const slug=g.slug||(g.name||'').toLowerCase().replace(/\s+/g,'-');
-        const href=`detail.html?type=game&slug=${encodeURIComponent(slug)}`;
-        const views=g._views||0;
+        const href=g._href||'#', key=`game:${slug}`, views=g._views||0;
         const publisher=(g.publisher||this.inferPublisherFromName(g.name)).toUpperCase();
-        return `${href}
+        return `<a href="${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
             ${g.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(g.cover), g.name):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -274,18 +277,17 @@
             <div class="title">${g.name||''}</div>
             ${g.short?`<p class="excerpt">${g.short}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric">${ICONS.eye}<span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
       buildCard(b){
         const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
-        const href=`detail.html?type=build&slug=${encodeURIComponent(slug)}`;
-        const views=b._views||0;
+        const href=b._href||'#', key=`build:${slug}`, views=b._views||0;
         const starRow=Array.from({length:5},(_,i)=>ICONS.star(i<(b._stars||3))).join('');
         const coinRow=Array.from({length:5},(_,i)=>ICONS.coin(i<(b._coins||0))).join('');
         const publisher=(b.publisher||this.inferPublisherFromName(b.gameName||'')).toUpperCase();
-        return `${href}
+        return `<a href="${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
             ${b.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(b.cover), b.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -297,7 +299,7 @@
             ${b.summary?`<p class="excerpt">${b.summary}</p>`:''}
           </div>
           <div class="card-foot">
-            <span class="metric">${ICONS.eye}<span data-views>${views.toLocaleString('fr-FR')}</span></span>
+            <span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span>
             <span class="metric">${starRow}</span>
             <span class="metric">${coinRow}</span>
           </div>
@@ -306,9 +308,8 @@
 
       guideCard(x){
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
-        const href=`detail.html?type=guide&slug=${encodeURIComponent(slug)}`;
-        const views=x._views||0;
-        return `${href}
+        const href=x._href||'#', key=`guide:${slug}`, views=x._views||0;
+        return `<a href="${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
             ${x.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(x.cover), x.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -319,15 +320,14 @@
             ${x.resource?`<p class="excerpt">Ressource : <strong>${x.resource}</strong></p>`:''}
             ${x.route?`<p class="excerpt">${x.route}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric">${ICONS.eye}<span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       },
 
       toolCard(t){
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
-        const href=`detail.html?type=tool&slug=${encodeURIComponent(slug)}`;
-        const views=t._views||0;
-        return `${href}
+        const href=t._href||'#', key=`tool:${slug}`, views=t._views||0;
+        return `<a href="${href}" class="card--game" data-viewkey="${key}">
           <div class="card-media">
             ${t.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(t.cover), t.title):'<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -338,7 +338,7 @@
             ${t.gameName?`<div class="publisher" style="margin-top:2px;">${(t.gameName||'').toUpperCase()}</div>`:''}
             ${t.notes?`<p class="excerpt" style="margin-top:6px;">${t.notes}</p>`:''}
           </div>
-          <div class="card-foot"><span class="metric">${ICONS.eye}<span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
+          <div class="card-foot"><span class="metric"><span class="icon">${ICONS.eye}</span><span data-views>${views.toLocaleString('fr-FR')}</span></span></div>
         </a>`;
       }
     }
