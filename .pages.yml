@@ -47,7 +47,7 @@ content:
         type: select
         options:
           fetch:
-            url: "https://redstrom.github.io/Tools/content/_indexes/games.json"
+            url: "https://redstrom.github.io/Tools/content/games/index.json"
             results: "items"        # tableau d’items
             value: "slug"           # on stocke le slug du jeu
             label: "{{name}}"       # on affiche le nom du jeu
@@ -99,7 +99,7 @@ content:
         type: select
         options:
           fetch:
-            url: "https://redstrom.github.io/Tools/content/_indexes/games.json"
+            url: "https://redstrom.github.io/Tools/content/games/index.json"
             results: "items"
             value: "slug"
             label: "{{name}}"
@@ -137,7 +137,7 @@ content:
         type: select
         options:
           fetch:
-            url: "https://redstrom.github.io/Tools/content/_indexes/games.json"
+            url: "https://redstrom.github.io/Tools/content/games/index.json"
             results: "items"
             value: "slug"
             label: "{{name}}"
@@ -146,3 +146,4 @@ content:
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
