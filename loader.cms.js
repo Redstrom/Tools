@@ -219,21 +219,6 @@
       root.innerHTML=head+body;
     },
 
-    // Incrémente **au clic** uniquement
-bindClicksForViews(){
-  // incrémente immédiatement en liste (avant la navigation)
-  document.querySelectorAll('[data-viewkey]').forEach(a=>{
-    a.addEventListener('mousedown', () => {
-      const k=a.getAttribute('data-viewkey');
-      const n = (k ? (localStorage.setItem(`view:${k}`, ((+localStorage.getItem(`view:${k}`)||0)+1)), (+localStorage.getItem(`view:${k}`)||0)) : 0);
-      const span=a.querySelector('[data-views]');
-      if (span) span.textContent = n.toLocaleString('fr-FR');
-    }, {passive:true});
-  });
-
-  // sécurité : on garde aussi l’incrément au clic dans le détail (déjà présent)
-},
-
     // ---------------- Templates ----------------
     tpl:{
       // TOUJOURS un <img> (ou un placeholder) – fini les URL en texte
