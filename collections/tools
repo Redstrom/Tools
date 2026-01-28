@@ -1,0 +1,37 @@
+{
+  "name": "tools",
+  "label": "Outils",
+  "type": "directory",
+  "path": "content/tools",
+  "create": true,
+  "format": "json",
+  "extension": "json",
+  "slug": "{{slug}}",
+  "fields": [
+    { "name": "title", "label": "Titre", "type": "string" },
+    { "name": "slug",  "label": "Slug",  "type": "string", "required": false },
+
+    {
+      "name": "kind",
+      "label": "Type",
+      "type": "select",
+      "options": { "values": ["Overlay","Plugin","Site","Autre"] },
+      "required": false
+    },
+
+    { "name": "url",      "label": "URL",   "type": "string", "required": false },
+    { "name": "notes",    "label": "Notes", "type": "text",   "required": false },
+    { "name": "gameName", "label": "Nom du jeu", "type": "string", "required": false },
+
+    {
+      "name": "cover",
+      "label": "Cover (16:9)",
+      "type": "image",
+      "directory": "assets/media/tools",
+      "publicPath": "/assets/media/tools",
+      "required": false
+    },
+
+    { "name": "body", "label": "Corps (HTML/Markdown)", "type": "text", "required": false }
+  ]
+}
