@@ -38,38 +38,34 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="container hstack" style="height:64px;">
-      index.html" class="hstack" style="gap:12px;text-decoration:none">
-        <div style="width:32px;height:32px;border-radius:8px;background:#22c55e;display:grid;place-items:center;color:#000;font-weight:900">K</div>
-        <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
-      </a>
-      <nav class="hstack" style="gap:16px;margin-left:24px">
-        <a href="games.html">Jeux</a>
-        <a href="builds.html">Builds</a>
-        <a href="guides.html">Guides</a>
-        <a href="tools.html">Outils</a>
-      </nav>
+<header>
+  <div class="container hstack" style="height:64px;">
+    <a href="index.html" class="hstack" style="gap:12px;text-decoration:none">
+      <div style="width:32px;height:32px;border-radius:8px;background:#22c55e;display:grid;place-items:center;color:#000;font-weight:900">K</div>
+      <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
+    </a>
+    <nav class="hstack" style="gap:16px;margin-left:24px">
+      <a href="games.html">Jeux</a>
+      <a href="builds.html">Builds</a>
+      <a href="guides.html">Guides</a>
+      <a href="tools.html">Outils</a>
+    </nav>
+    <div class="spacer"></div>
+  </div>
+</header>
 
-      <div class="spacer"></div>
-    </div>
-  </header>
-
-  <main class="wide">
-    <div id="detail-root"></div>
-  </main>
-
-  <!-- Charge le loader (cache-bust mp3) -->
-  loader.cms.js?v=mp3"></script>
-  <script>
-    window.CMS_LOADER && window.CMS_LOADER.init({
-      page: 'detail',
-      gamesIndex:  'content/games/index.json',
-      buildsIndex: 'content/builds/index.json',
-      guidesIndex: 'content/guides/index.json',
-      toolsIndex:  'content/tools/index.json',
-      sel: {}, clearHardcode: false
-    });
-  </script>
+<!-- … plus bas, juste avant </body> … -->
+<script src="loader.cms.js?v=mp3"></script>
+<script>
+  window.CMS_LOADER && window.CMS_LOADER.init({
+    page: 'detail',
+    gamesIndex:  'content/games/index.json',
+    buildsIndex: 'content/builds/index.json',
+    guidesIndex: 'content/guides/index.json',
+    toolsIndex:  'content/tools/index.json',
+    sel: {},
+    clearHardcode: false
+  });
+</script>
 </body>
 </html>
