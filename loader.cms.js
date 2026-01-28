@@ -15,7 +15,7 @@
       clearHardcode: true
     },
     init(userCfg){
-      this.cfg = Object.assign({}, this.cfg, userCfg||{});
+      this.cfg = Object.assign({}, this.cfg, userCfg || {});
       document.addEventListener('DOMContentLoaded', ()=> this.run());
     },
     async run(){
