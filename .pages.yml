@@ -1,120 +1,218 @@
-media:
-  input: assets/media
-  output: /assets/media
+# Pages CMS – Configuration principale
+# Déposez ce fichier à la RACINE du dépôt : /.pages.yml
 
-content:
-  - name: games
-    label: Jeux
-    type: collection
-    path: content/games
-    filename: "{slug}.json"
-    view:
-      fields: [ name, slug, status ]
-      primary: name
-      sort: [ name ]
-    fields:
-      - { name: name, label: Nom, type: string, required: true }
-      - { name: slug, label: Slug, type: string, required: true }
-      - { name: status, label: Statut, type: select, options: [actif, maintenance, bientot], default: actif }
-      - { name: cover, label: Couverture, type: image }
-      - { name: short, label: Description courte, type: text, options: { rows: 3, maxlength: 180 } }
-      - name: platforms
-        label: Plateformes
-        type: object
-        list: true
-        fields:
-          - { name: name, label: Nom, type: string }
-      - name: tags
-        label: Tags
-        type: object
-        list: true
-        fields:
-          - { name: tag, label: Tag, type: string }
+# Dossier médias par défaut (peut être surchargé par champ)
+media_folder: "assets/media"
+public_folder: "/assets/media"
 
-  - name: builds
-    label: Builds
-    type: collection
-    path: content/builds
-    filename: "{slug}.json"
-    view:
-      fields: [ title, game, version, tier ]
-      primary: title
-      sort: [ -updatedAt, title ]
+# --- Collections ---
+collections:
+  # ==========================
+  # JEUX
+  # ==========================
+  - label: "Jeux"
+    name: "games"
+    folder: "content/games"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{slug}}"
     fields:
-      - { name: title, label: Titre, type: string, required: true }
-      - name: game
-        label: Jeu
-        type: reference
+      - { label: "Nom", name: "name", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string" }
+
+      - label: "Statut"
+        name: "status"
+        widget: "select"
         options:
-          collection: games
-          search: "name,slug"
-          value: "{path}"
-          label: "{name}"
-      - { name: slug, label: Slug, type: string, required: true }
-      - { name: version, label: Version, type: string }
-      - { name: tier, label: Tier, type: select, options: [S, A, B, C], default: A }
-      - { name: difficulty, label: Difficulté, type: select, options: [Facile, Moyen, Difficile, Expert], default: Moyen }
-      - name: items
-        label: Objets / Compétences clés
-        type: object
-        list: true
-        fields:
-          - { name: name, label: Nom, type: string }
-          - { name: note, label: Note, type: string }
-      - { name: body, label: Détails du build, type: rich-text }
-      - { name: updatedAt, label: MAJ, type: date }
+          - { label: "Actif", value: "actif" }
+          - { label: "Archivé", value: "archive" }
+        default: "actif"
+        required: false
 
-  - name: guides
-    label: Guides de farm
-    type: collection
-    path: content/guides
-    filename: "{slug}.json"
-    view:
-      fields: [ title, game, resource ]
-      primary: title
-      sort: [ -date, title ]
-    fields:
-      - { name: title, label: Titre, type: string, required: true }
-      - name: game
-        label: Jeu
-        type: reference
-        options:
-          collection: games
-          search: "name,slug"
-          value: "{path}"
-          label: "{name}"
-      - { name: resource, label: Ressource/Objet, type: string, required: true }
-      - { name: route, label: Chemin/Spot, type: text, options: { rows: 2 } }
-      - name: tips
-        label: Conseils rapides
-        type: object
-        list: true
-        fields:
-          - { name: tip, label: Conseil, type: string }
-      - { name: body, label: Guide détaillé, type: rich-text }
-      - { name: date, label: Date, type: date }
+      - label: "Cover (16:9 – 1280×720 recommandé)"
+        name: "cover"
+        widget: "image"
+        media_folder: "assets/media/games"
+        public_folder: "/assets/media/games"
+        required: false
 
-  - name: tools
-    label: Outils
-    type: collection
-    path: content/tools
-    filename: "{slug}.json"
-    view:
-      fields: [ title, game, kind ]
-      primary: title
-      sort: [ title ]
+      - { label: "Description courte", name: "short", widget: "text", required: false }
+      - { label: "Éditeur / Studio", name: "publisher", widget: "string", required: false }
+
+      # Liste simple de tags => [{ "tag":"..." }, ...]
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        field: { label: "Tag", name: "tag", widget: "string" }
+        required: false
+        default: []
+
+      # Métriques optionnelles (affichées si présentes)
+      - { label: "Players (ex: 180.0M)", name: "players", widget: "string", required: false }
+      - { label: "Servers (ex: 1250)", name: "servers", widget: "string", required: false }
+      - { label: "Trend (ex: 98%)", name: "trend", widget: "string", required: false }
+
+  # ==========================
+  # BUILDS
+  # ==========================
+  - label: "Builds"
+    name: "builds"
+    folder: "content/builds"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{slug}}"
     fields:
-      - { name: title, label: Titre, type: string, required: true }
-      - name: game
-        label: Jeu
-        type: reference
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string" }
+
+      # Référence vers un JEU : on enregistre le CHEMIN JSON, lu par ton script d'indexation
+      - label: "Jeu lié"
+        name: "game"
+        widget: "relation"
+        collection: "games"
+        search_fields: ["name"]
+        display_fields: ["name"]
+        value_field: "content/games/{{slug}}.json"
+        required: false
+
+      - { label: "Nom du jeu (affichage – facultatif si 'Jeu lié' est utilisé)", name: "gameName", widget: "string", required: false }
+
+      - label: "Tier"
+        name: "tier"
+        widget: "select"
+        options: ["S","A","B","C"]
+        required: false
+
+      - { label: "Version", name: "version", widget: "string", required: false }
+      - { label: "Résumé (courte intro)", name: "summary", widget: "text", required: false }
+
+      # Difficulté : texte OU étoiles (1..5). Le front convertit le texte en étoiles si 'difficultyStars' est vide.
+      - label: "Difficulté (texte)"
+        name: "difficulty"
+        widget: "select"
         options:
-          collection: games
-          search: "name,slug"
-          value: "{path}"
-          label: "{name}"
-      - { name: kind, label: Type, type: select, options: [Overlay, Config, Addon, Guide, App], default: App }
-      - { name: url, label: Lien, type: string, required: true }
-      - { name: author, label: Auteur/Fournisseur, type: string }
-      - { name: notes, label: Notes rapides, type: text, options: { rows: 2 } }
-      - { name: body, label: Détails, type: rich-text }
+          - { label: "Facile", value: "facile" }
+          - { label: "Moyen", value: "moyen" }
+          - { label: "Difficile", value: "difficile" }
+          - { label: "Expert", value: "expert" }
+        required: false
+
+      - label: "Difficulté (étoiles)"
+        name: "difficultyStars"
+        widget: "number"
+        min: 1
+        max: 5
+        required: false
+
+      # Coût (0..5 pièces)
+      - label: "Coût (pièces, 0..5)"
+        name: "cost"
+        widget: "number"
+        min: 0
+        max: 5
+        required: false
+
+      - label: "Cover (16:9 – 1280×720 recommandé)"
+        name: "cover"
+        widget: "image"
+        media_folder: "assets/media/builds"
+        public_folder: "/assets/media/builds"
+        required: false
+
+      - { label: "Mise à jour (ISO)", name: "updatedAt", widget: "datetime", required: false }
+
+      # Corps riche : on stocke du HTML (ou markdown → rendu front tel quel)
+      - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
+
+  # ==========================
+  # GUIDES
+  # ==========================
+  - label: "Guides"
+    name: "guides"
+    folder: "content/guides"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{slug}}"
+    fields:
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string" }
+
+      - label: "Jeu lié"
+        name: "game"
+        widget: "relation"
+        collection: "games"
+        search_fields: ["name"]
+        display_fields: ["name"]
+        value_field: "content/games/{{slug}}.json"
+        required: false
+
+      - { label: "Nom du jeu (affichage – facultatif)", name: "gameName", widget: "string", required: false }
+
+      - { label: "Ressource (ex: Or, XP…)", name: "resource", widget: "string", required: false }
+      - { label: "Route / Plan", name: "route", widget: "text", required: false }
+
+      # Liste simple de tips => [{ "tip":"..." }, ...]
+      - label: "Tips"
+        name: "tips"
+        widget: "list"
+        field: { label: "Tip", name: "tip", widget: "string" }
+        required: false
+        default: []
+
+      - label: "Cover (16:9 – 1280×720 recommandé)"
+        name: "cover"
+        widget: "image"
+        media_folder: "assets/media/guides"
+        public_folder: "/assets/media/guides"
+        required: false
+
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
+
+  # ==========================
+  # OUTILS
+  # ==========================
+  - label: "Outils"
+    name: "tools"
+    folder: "content/tools"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{slug}}"
+    fields:
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string", required: false }
+
+      - label: "Type"
+        name: "kind"
+        widget: "select"
+        options:
+          - { label: "Overlay", value: "Overlay" }
+          - { label: "Plugin",  value: "Plugin" }
+          - { label: "Site",    value: "Site" }
+          - { label: "Autre",   value: "Autre" }
+        required: false
+
+      - { label: "URL", name: "url", widget: "string", required: false }
+      - { label: "Notes", name: "notes", widget: "text", required: false }
+
+      - label: "Jeu lié"
+        name: "game"
+        widget: "relation"
+        collection: "games"
+        search_fields: ["name"]
+        display_fields: ["name"]
+        value_field: "content/games/{{slug}}.json"
+        required: false
+
+      - label: "Cover (16:9 – 1280×720 recommandé)"
+        name: "cover"
+        widget: "image"
+        media_folder: "assets/media/tools"
+        public_folder: "/assets/media/tools"
+        required: false
+
+      - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
