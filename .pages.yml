@@ -1,12 +1,8 @@
-# Pages CMS – config minimale, 4 collections visibles
-
 media_folder: "assets/media"
 public_folder: "/assets/media"
 
 collections:
-  # ---------------------------
-  # JEUX
-  # ---------------------------
+  # Jeux
   - label: "Jeux"
     name: "games"
     folder: "content/games"
@@ -15,42 +11,35 @@ collections:
     extension: "json"
     format: "json"
     fields:
-      - { label: "Nom",   name: "name", widget: "string" }
-      - { label: "Slug",  name: "slug", widget: "string" }
-
+      - { label: "Nom",  name: "name", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string" }
       - label: "Statut"
         name: "status"
         widget: "select"
         options:
-          - { label: "Actif",   value: "actif" }
+          - { label: "Actif", value: "actif" }
           - { label: "Archivé", value: "archive" }
         default: "actif"
         required: false
-
       - label: "Cover (16:9)"
         name: "cover"
         widget: "image"
         media_folder: "assets/media/games"
         public_folder: "/assets/media/games"
         required: false
-
       - { label: "Description courte", name: "short", widget: "text", required: false }
       - { label: "Éditeur / Studio",   name: "publisher", widget: "string", required: false }
-
       - label: "Tags"
         name: "tags"
         widget: "list"
         field: { label: "Tag", name: "tag", widget: "string" }
         required: false
         default: []
-
       - { label: "Players", name: "players", widget: "string", required: false }
       - { label: "Servers", name: "servers", widget: "string", required: false }
       - { label: "Trend",   name: "trend",   widget: "string", required: false }
 
-  # ---------------------------
-  # BUILDS
-  # ---------------------------
+  # Builds
   - label: "Builds"
     name: "builds"
     folder: "content/builds"
@@ -61,27 +50,22 @@ collections:
     fields:
       - { label: "Titre", name: "title", widget: "string" }
       - { label: "Slug",  name: "slug",  widget: "string" }
-
       - label: "Jeu lié"
         name: "game"
         widget: "relation"
         collection: "games"
-        search_fields: ["name"]
+        search_fields:  ["name"]
         display_fields: ["name"]
-        value_field: "content/games/{{slug}}.json"
+        value_field:    "content/games/{{slug}}.json"
         required: false
-
       - { label: "Nom du jeu (affichage)", name: "gameName", widget: "string", required: false }
-
       - label: "Tier"
         name: "tier"
         widget: "select"
         options: ["S","A","B","C"]
         required: false
-
-      - { label: "Version",  name: "version", widget: "string", required: false }
-      - { label: "Résumé",   name: "summary", widget: "text",    required: false }
-
+      - { label: "Version", name: "version", widget: "string", required: false }
+      - { label: "Résumé",  name: "summary", widget: "text",   required: false }
       - label: "Difficulté (texte)"
         name: "difficulty"
         widget: "select"
@@ -91,34 +75,28 @@ collections:
           - { label: "Difficile", value: "difficile" }
           - { label: "Expert",    value: "expert" }
         required: false
-
       - label: "Difficulté (étoiles 1..5)"
         name: "difficultyStars"
         widget: "number"
         min: 1
         max: 5
         required: false
-
       - label: "Coût (pièces 0..5)"
         name: "cost"
         widget: "number"
         min: 0
         max: 5
         required: false
-
       - label: "Cover (16:9)"
         name: "cover"
         widget: "image"
         media_folder: "assets/media/builds"
         public_folder: "/assets/media/builds"
         required: false
-
       - { label: "Mise à jour", name: "updatedAt", widget: "datetime", required: false }
       - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
 
-  # ---------------------------
-  # GUIDES
-  # ---------------------------
+  # Guides
   - label: "Guides"
     name: "guides"
     folder: "content/guides"
@@ -129,7 +107,6 @@ collections:
     fields:
       - { label: "Titre", name: "title", widget: "string" }
       - { label: "Slug",  name: "slug",  widget: "string" }
-
       - label: "Jeu lié"
         name: "game"
         widget: "relation"
@@ -138,31 +115,25 @@ collections:
         display_fields: ["name"]
         value_field:    "content/games/{{slug}}.json"
         required: false
-
       - { label: "Nom du jeu (affichage)", name: "gameName", widget: "string", required: false }
       - { label: "Ressource", name: "resource", widget: "string", required: false }
       - { label: "Route / Plan", name: "route", widget: "text", required: false }
-
       - label: "Tips"
         name: "tips"
         widget: "list"
         field: { label: "Tip", name: "tip", widget: "string" }
         required: false
         default: []
-
       - label: "Cover (16:9)"
         name: "cover"
         widget: "image"
         media_folder: "assets/media/guides"
         public_folder: "/assets/media/guides"
         required: false
-
       - { label: "Date", name: "date", widget: "datetime", required: false }
       - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
 
-  # ---------------------------
-  # OUTILS
-  # ---------------------------
+  # Outils
   - label: "Outils"
     name: "tools"
     folder: "content/tools"
@@ -173,7 +144,6 @@ collections:
     fields:
       - { label: "Titre", name: "title", widget: "string" }
       - { label: "Slug",  name: "slug",  widget: "string", required: false }
-
       - label: "Type"
         name: "kind"
         widget: "select"
@@ -183,10 +153,8 @@ collections:
           - { label: "Site",    value: "Site" }
           - { label: "Autre",   value: "Autre" }
         required: false
-
       - { label: "URL",   name: "url",   widget: "string", required: false }
       - { label: "Notes", name: "notes", widget: "text",   required: false }
-
       - label: "Jeu lié"
         name: "game"
         widget: "relation"
@@ -195,12 +163,10 @@ collections:
         display_fields: ["name"]
         value_field:    "content/games/{{slug}}.json"
         required: false
-
       - label: "Cover (16:9)"
         name: "cover"
         widget: "image"
         media_folder: "assets/media/tools"
         public_folder: "/assets/media/tools"
         required: false
-
       - { label: "Corps (HTML/Markdown)", name: "body", widget: "text", required: false }
