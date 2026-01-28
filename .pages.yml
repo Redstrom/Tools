@@ -1,196 +1,47 @@
-# === .pages.yml (corrigé / minimal) ===
-# Place à la racine du repo.
-
-media:
-  input: "assets/media"
-  output: "/assets/media"
+media_folder: "assets/media"
+public_folder: "/assets/media"
 
 collections:
-  # ----------------------------
-  # JEUX
-  # ----------------------------
-  - name: "games"
-    label: "Jeux"
-    path: "content/games"
+  - label: "Jeux"
+    name: "games"
+    folder: "content/games"
     create: true
-    slug: "{{slug}}"
-    format: "json"
     extension: "json"
+    format: "json"
+    slug: "{{slug}}"
     fields:
-      - { name: "name",  label: "Nom",  type: "string" }
-      - { name: "slug",  label: "Slug", type: "string" }
+      - { label: "Nom",  name: "name", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string" }
 
-      - name: "status"
-        label: "Statut"
-        type: "select"
-        options:
-          values:
-            - { label: "Actif",   value: "actif" }
-            - { label: "Archivé", value: "archive" }
-        required: false
-        default: "actif"
-
-      - name: "cover"
-        label: "Cover (16:9)"
-        type: "image"
-        directory: "assets/media/games"
-        publicPath: "/assets/media/games"
-        required: false
-
-      - { name: "short",     label: "Description courte", type: "text",   required: false }
-      - { name: "publisher", label: "Éditeur / Studio",   type: "string", required: false }
-
-      # liste simple => [{ "tag": "..." }, ...]
-      - name: "tags"
-        label: "Tags"
-        type: "list"
-        field:
-          name: "tag"
-          label: "Tag"
-          type: "string"
-        required: false
-        default: []
-
-      # métriques optionnelles (affichées si présentes)
-      - { name: "players", label: "Players", type: "string", required: false }
-      - { name: "servers", label: "Servers", type: "string", required: false }
-      - { name: "trend",   label: "Trend",   type: "string", required: false }
-
-  # ----------------------------
-  # BUILDS
-  # ----------------------------
-  - name: "builds"
-    label: "Builds"
-    path: "content/builds"
+  - label: "Builds"
+    name: "builds"
+    folder: "content/builds"
     create: true
-    slug: "{{slug}}"
-    format: "json"
     extension: "json"
+    format: "json"
+    slug: "{{slug}}"
     fields:
-      - { name: "title", label: "Titre", type: "string" }
-      - { name: "slug",  label: "Slug",  type: "string" }
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Slug",  name: "slug",  widget: "string" }
 
-      # on saisit simplement le nom du jeu (pas de relation pour éviter les incompatibilités)
-      - { name: "gameName", label: "Nom du jeu", type: "string", required: false }
-
-      - name: "tier"
-        label: "Tier"
-        type: "select"
-        options:
-          values: ["S","A","B","C"]
-        required: false
-
-      - { name: "version",  label: "Version",  type: "string", required: false }
-      - { name: "summary",  label: "Résumé",   type: "text",   required: false }
-
-      - name: "difficulty"
-        label: "Difficulté (texte)"
-        type: "select"
-        options:
-          values:
-            - { label: "Facile",    value: "facile" }
-            - { label: "Moyen",     value: "moyen" }
-            - { label: "Difficile", value: "difficile" }
-            - { label: "Expert",    value: "expert" }
-        required: false
-
-      - name: "difficultyStars"
-        label: "Difficulté (étoiles 1..5)"
-        type: "number"
-        min: 1
-        max: 5
-        required: false
-
-      - name: "cost"
-        label: "Coût (pièces 0..5)"
-        type: "number"
-        min: 0
-        max: 5
-        required: false
-
-      - name: "cover"
-        label: "Cover (16:9)"
-        type: "image"
-        directory: "assets/media/builds"
-        publicPath: "/assets/media/builds"
-        required: false
-
-      - { name: "updatedAt", label: "Mise à jour", type: "datetime", required: false }
-      - { name: "body",      label: "Corps (HTML/Markdown)", type: "text", required: false }
-
-  # ----------------------------
-  # GUIDES
-  # ----------------------------
-  - name: "guides"
-    label: "Guides"
-    path: "content/guides"
+  - label: "Guides"
+    name: "guides"
+    folder: "content/guides"
     create: true
-    slug: "{{slug}}"
-    format: "json"
     extension: "json"
+    format: "json"
+    slug: "{{slug}}"
     fields:
-      - { name: "title", label: "Titre", type: "string" }
-      - { name: "slug",  label: "Slug",  type: "string" }
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Slug",  name: "slug",  widget: "string" }
 
-      - { name: "gameName", label: "Nom du jeu", type: "string", required: false }
-      - { name: "resource", label: "Ressource",  type: "string", required: false }
-      - { name: "route",    label: "Route / Plan", type: "text", required: false }
-
-      - name: "tips"
-        label: "Tips"
-        type: "list"
-        field:
-          name: "tip"
-          label: "Tip"
-          type: "string"
-        required: false
-        default: []
-
-      - name: "cover"
-        label: "Cover (16:9)"
-        type: "image"
-        directory: "assets/media/guides"
-        publicPath: "/assets/media/guides"
-        required: false
-
-      - { name: "date", label: "Date", type: "datetime", required: false }
-      - { name: "body", label: "Corps (HTML/Markdown)", type: "text", required: false }
-
-  # ----------------------------
-  # OUTILS
-  # ----------------------------
-  - name: "tools"
-    label: "Outils"
-    path: "content/tools"
+  - label: "Outils"
+    name: "tools"
+    folder: "content/tools"
     create: true
-    slug: "{{slug}}"
-    format: "json"
     extension: "json"
+    format: "json"
+    slug: "{{slug}}"
     fields:
-      - { name: "title", label: "Titre", type: "string" }
-      - { name: "slug",  label: "Slug",  type: "string", required: false }
-
-      - name: "kind"
-        label: "Type"
-        type: "select"
-        options:
-          values:
-            - { label: "Overlay", value: "Overlay" }
-            - { label: "Plugin",  value: "Plugin" }
-            - { label: "Site",    value: "Site" }
-            - { label: "Autre",   value: "Autre" }
-        required: false
-
-      - { name: "url",   label: "URL",   type: "string", required: false }
-      - { name: "notes", label: "Notes", type: "text",   required: false }
-
-      - { name: "gameName", label: "Nom du jeu", type: "string", required: false }
-
-      - name: "cover"
-        label: "Cover (16:9)"
-        type: "image"
-        directory: "assets/media/tools"
-        publicPath: "/assets/media/tools"
-        required: false
-
-      - { name: "body", label: "Corps (HTML/Markdown)", type: "text", required: false }
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Slug",  name: "slug",  widget: "string" }
