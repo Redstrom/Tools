@@ -135,19 +135,18 @@
 
   <!-- ======= LOADER CMS ======= -->
   <!-- Place ton fichier loader ici (racine ou /public) -->
-  <script src="/loader.cms.js" defer></script>
+  <script src="loader.cms.js" defer></script>
+
 <script>
   window.CMS_LOADER && window.CMS_LOADER.init({
-    // Chemins relatifs (sans slash initial) pour un Project site GitHub Pages
     gamesIndex:  'content/games/index.json',
     buildsIndex: 'content/builds/index.json',
     guidesIndex: 'content/guides/index.json',
     toolsIndex:  'content/tools/index.json',
-    sel: { 
-      games:'#games-grid', builds:'#builds-grid', guides:'#guides-grid', tools:'#tools-grid' 
-    },
+    sel: { games:'#games-grid', builds:'#builds-grid', guides:'#guides-grid', tools:'#tools-grid' },
     clearHardcode: true
   });
 </script>
+
 </body>
 </html>
