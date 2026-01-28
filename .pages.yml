@@ -1,33 +1,54 @@
-media_folder: "assets/media"
-public_folder: "/assets/media"
+# /.pages.yml — version compacte qui ré-affiche les 4 collections dans la barre latérale
+
+media:
+  input: "assets/media"
+  output: "/assets/media"
 
 collections:
-  - label: "Jeux"
-    name: "games"
-    files:
-      - label: "League of Legends"
-        name: "league-of-legends"
-        file: "content/games/league-of-legends.json"
-        format: "json"
-        fields:
-          - { label: "Nom",  name: "name", widget: "string" }
-          - { label: "Slug", name: "slug", widget: "string" }
+  games:
+    label: "Jeux"
+    type: "directory"
+    path: "content/games"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{slug}}"
+    fields:
+      - { name: "name",  label: "Nom",  type: "string" }
+      - { name: "slug",  label: "Slug", type: "string" }
 
-      - label: "Counter-Strike 2"
-        name: "counter-strike-2"
-        file: "content/games/counter-strike-2.json"
-        format: "json"
-        fields:
-          - { label: "Nom",  name: "name", widget: "string" }
-          - { label: "Slug", name: "slug", widget: "string" }
+  builds:
+    label: "Builds"
+    type: "directory"
+    path: "content/builds"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{slug}}"
+    fields:
+      - { name: "title", label: "Titre", type: "string" }
+      - { name: "slug",  label: "Slug",  type: "string" }
 
-  - label: "Builds"
-    name: "builds"
-    files:
-      - label: "Aatrox Top – Sustained Carry"
-        name: "aatrox-top-sustained-carry"
-        file: "content/builds/aatrox-top-sustained-carry.json"
-        format: "json"
-        fields:
-          - { label: "Titre", name: "title", widget: "string" }
-          - { label: "Slug",  name: "slug",  widget: "string" }
+  guides:
+    label: "Guides"
+    type: "directory"
+    path: "content/guides"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{slug}}"
+    fields:
+      - { name: "title", label: "Titre", type: "string" }
+      - { name: "slug",  label: "Slug",  type: "string" }
+
+  tools:
+    label: "Outils"
+    type: "directory"
+    path: "content/tools"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{slug}}"
+    fields:
+      - { name: "title", label: "Titre", type: "string" }
+      - { name: "slug",  label: "Slug",  type: "string" }
