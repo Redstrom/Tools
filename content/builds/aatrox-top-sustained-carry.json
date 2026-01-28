@@ -1,14 +1,10 @@
 {
   "title": "Aatrox Top – Sustained Carry",
-  "game": "content/games/league-of-legends.json",
-  "slug": "aatrox-top-sustained-carry",
-  "version": "14.5",
   "tier": "S",
-  "difficulty": "Difficile",
-  "items": [
-    { "name": "Éclipse", "note": "+ burst + sustain" },
-    { "name": "Ciel éventré", "note": "anti‑tank" }
-  ],
-  "body": "<p>Priorise le <strong>push contrôlé</strong>, trades courts autour de <em>Q</em> et snowball sur les timings d’items.</p>",
-  "updatedAt": "2024-03-15"
+  "version": "14.5",
+  "difficulty": "difficile",
+  "difficultyStars": 4,
+  "cost": 7,
+  "updatedAt": "2024-03-15",
+  "body": "<p>Priorise le <strong>push contrôlé</strong>, trades courts autour de <em>Q</em> et snowball sur les timings d’items.</p>"
 }
