@@ -7,7 +7,7 @@
 
   <style>
     :root {
-      --bg: #0b0c0d; --fg:#e5e7eb; --muted:#9ca3af;
+      --bg:#0b0c0d; --fg:#e5e7eb; --muted:#9ca3af;
       --card:#101317; --border:#1f242b; --primary:#22c55e;
     }
     body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif}
@@ -24,7 +24,6 @@
     @media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
-    /* --- Cartes --- */
     .card--game{position:relative;border:1px solid var(--border);background:#0f1115;border-radius:12px;overflow:hidden;transition:border-color .25s,box-shadow .25s,transform .25s;box-shadow:0 6px 24px rgba(0,0,0,.28)}
     .card--game:hover{border-color:#22c55e;box-shadow:0 10px 36px rgba(0,0,0,.35)}
     .card-media{position:relative;aspect-ratio:16/9;overflow:hidden}
@@ -40,7 +39,6 @@
     .metric svg{display:block}
     .media-ph{background:radial-gradient(1200px 280px at -10% -10%,#1b2330,transparent 40%),radial-gradient(1000px 400px at 110% 110%,#141922,transparent 45%),#0f1115}
 
-    /* Boutons */
     .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#131720;color:var(--fg)}
     .btn:hover{border-color:#22c55e}
@@ -54,10 +52,10 @@
         <div style="font-weight:800;letter-spacing:-.02em">REDSTROM<span style="color:#22c55e">GAMES</span></div>
       </a>
       <nav class="hstack" style="gap:16px;margin-left:24px">
-        games.html">Jeux</a>
-        builds.html">Builds</a>
-        guides.html">Guides</a>
-        tools.html">Outils</a>
+        <a href="games.html">Jeux</a>
+        <a href="builds.html">Builds</a>
+        <a href="guides.html">Guides</a>
+        <a href="tools.html">Outils</a>
       </nav>
       <div class="spacer"></div>
     </div>
@@ -65,41 +63,37 @@
 
   <main>
     <div class="container">
-      <!-- JEUX (extrait) -->
       <section class="section">
         <div class="row">
           <h2>Jeux</h2>
-          
+          <a class="btn" href="games.html">Voir tout</a>
         </div>
         <div class="bar" aria-hidden="true"></div>
         <div id="games-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
-      <!-- BUILDS (extrait) -->
       <section class="section">
         <div class="row">
           <h2>Builds</h2>
-          
+          <a class="btn" href="builds.html">Voir tout</a>
         </div>
         <div class="bar" aria-hidden="true"></div>
         <div id="builds-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
-      <!-- GUIDES (extrait) -->
       <section class="section">
         <div class="row">
           <h2>Guides</h2>
-          
+          <a class="btn" href="guides.html">Voir tout</a>
         </div>
         <div class="bar" aria-hidden="true"></div>
         <div id="guides-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
-      <!-- OUTILS (extrait) -->
       <section class="section">
         <div class="row">
           <h2>Outils</h2>
-          
+          <a class="btn" href="tools.html">Voir tout</a>
         </div>
         <div class="bar" aria-hidden="true"></div>
         <div id="tools-grid" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
@@ -114,19 +108,18 @@
     </div>
   </footer>
 
-  <!-- Loader (sans defer) -->
-  loader.cms.js?v=mp1"></script>
+  <!-- CORRECT: script avec src + cache bust -->
+  <script src="loader.cms.js?v=mp2"></script>
   <script>
     window.CMS_LOADER && window.CMS_LOADER.init({
-      // Home = aperçu (limites par section)
-      home: { gamesLimit: 3, buildsLimit: 3, guidesLimit: 3, toolsLimit: 3 },
-      // Endpoints relatifs → le loader préfixe tout seul pour /Tools/
-      gamesIndex:  'content/games/index.json',
-      buildsIndex: 'content/builds/index.json',
-      guidesIndex: 'content/guides/index.json',
-      toolsIndex:  'content/tools/index.json',
-      sel: { games:'#games-grid', builds:'#builds-grid', guides:'#guides-grid', tools:'#tools-grid' },
-      clearHardcode: true
+      page:'home',
+      home:{gamesLimit:3,buildsLimit:3,guidesLimit:3,toolsLimit:3},
+      gamesIndex:'content/games/index.json',
+      buildsIndex:'content/builds/index.json',
+      guidesIndex:'content/guides/index.json',
+      toolsIndex:'content/tools/index.json',
+      sel:{games:'#games-grid',builds:'#builds-grid',guides:'#guides-grid',tools:'#tools-grid'},
+      clearHardcode:true
     });
   </script>
 </body>
