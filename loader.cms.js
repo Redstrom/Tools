@@ -1,16 +1,38 @@
 (function () {
-  // ---------- VERSION ----------
-  const VERSION = 'v9';
-  console.log(`[CMS] loader ${VERSION}`);
+  // =========================
+  //  CONFIG & VERSIONING
+  // =========================
+  const VERSION = 'v9.1';  // <-- tu changes ça SEULEMENT quand tu veux
+  const FILE    = 'loader.cms.js';
+  const UPDATE  = { check: true, forceReload: false }; // forceReload=true => recharge auto si ETag change
 
-  // ---------- Icônes ----------
-  const ICONS = {
-    eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>',
-    star:(f)=> f?'<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
-    coin:(f)=> f?'<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="9"/></svg>':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#eab308" stroke-width="1.5"/></svg>'
-  };
+  console.log(`[CMS] ${FILE} ${VERSION}`);
 
-  // ---------- Vues (localStorage) ----------
+  // -------------------------
+  //  Auto-update via ETag
+  // -------------------------
+  (async function selfUpdatePing(){
+    if (!UPDATE.check) return;
+    try {
+      const res = await fetch(FILE + '?_ping=' + Date.now(), { cache: 'no-store' });
+      const etag = res.headers.get('etag') || res.headers.get('x-amz-version-id') || '';
+      const key  = 'cms_loader_etag';
+      const prev = localStorage.getItem(key) || '';
+      if (etag && prev && etag !== prev) {
+        const msg = `[CMS] Nouvelle version détectée (${etag.slice(0,8)} != ${prev.slice(0,8)}). ` +
+                    (UPDATE.forceReload ? 'Reload...' : 'Ctrl+F5 pour recharger le loader.');
+        console.warn(msg);
+        if (UPDATE.forceReload) location.reload(true);
+      }
+      if (etag) localStorage.setItem(key, etag);
+    } catch (_) {
+      // silencieux
+    }
+  })();
+
+  // =========================
+  //  UTIL: vues (localStorage)
+  // =========================
   const Views = {
     key:k=>`view:${k}`,
     inc(k){ const kk=this.key(k); const n=(+localStorage.getItem(kk)||0)+1; localStorage.setItem(kk,n); return n; },
@@ -18,19 +40,20 @@
     resetAll(){ Object.keys(localStorage).forEach(k=>k.startsWith('view:')&&localStorage.removeItem(k)); }
   };
 
-  // ---------- CMS ----------
+  // =========================
+  //  CMS Loader (auto-init)
+  // =========================
   const CMS = {
     cfg:{
-      // valeurs par défaut
       gamesIndex:'', buildsIndex:'', guidesIndex:'', toolsIndex:'',
       sel:{games:'#games-grid',builds:'#builds-grid',guides:'#guides-grid',tools:'#tools-grid'},
-      basePrefix:'/', clearHardcode:true, page:'auto',        // page:'auto' = auto-détection
+      basePrefix:'/', clearHardcode:true, page:'auto',
       home:{gamesLimit:3,buildsLimit:3,guidesLimit:3,toolsLimit:3}
     },
 
     init(){
-      // basePrefix pour GitHub Pages Project (/<repo>/)
-      const parts=location.pathname.split('/').filter(Boolean);
+      // basePrefix (GitHub Pages project /<repo>/)
+      const parts = location.pathname.split('/').filter(Boolean);
       this.cfg.basePrefix = parts.length>0 ? `/${parts[0]}/` : '/';
 
       // endpoints "classiques"
@@ -40,18 +63,16 @@
       this.cfg.guidesIndex = norm('content/guides/index.json');
       this.cfg.toolsIndex  = norm('content/tools/index.json');
 
-      // type de page : 1) via <meta name="cms:page">, 2) auto-détection
-      const meta = document.querySelector('meta[name="cms:page"]');
-      const hinted = meta?.content?.trim();
-      if (hinted) this.cfg.page = hinted;
-      else this.cfg.page = this.autodetectPage();
+      // page type: <meta> ou auto
+      const hinted = document.querySelector('meta[name="cms:page"]')?.content?.trim();
+      this.cfg.page = hinted || this.autodetectPage();
 
-      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>this.run());
+      // go
+      if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>this.run());
       else this.run();
     },
 
     autodetectPage(){
-      // Devine la page selon les conteneurs présents (utile si tu ne veux pas de <meta>)
       if (document.querySelector(this.cfg.sel.games))  return 'games';
       if (document.querySelector(this.cfg.sel.builds)) return 'builds';
       if (document.querySelector(this.cfg.sel.guides)) return 'guides';
@@ -77,18 +98,17 @@
 
     async run(){
       switch(this.cfg.page){
-        case 'home': break; // landing = rien à lister
+        case 'home': break;
         case 'games':  await this.renderGames(true);  break;
         case 'builds': await this.renderBuilds(true); break;
         case 'guides': await this.renderGuides(true); break;
         case 'tools':  await this.renderTools(true);  break;
         case 'detail': await this.renderDetail();     break;
-        default: break;
       }
       this.bindClicksForViews();
     },
 
-    // ------------- LISTES -------------
+    // -------- LISTES --------
     async renderGames(full=false,limit=0){
       const [games, builds, tools] = await Promise.all([
         this.fetchIndex(this.cfg.gamesIndex),
@@ -96,16 +116,17 @@
         this.fetchIndex(this.cfg.toolsIndex)
       ]);
       const items = games.items || [];
-      const byGame = list => { const m=new Map(); (list.items||[]).forEach(it=>{ const key=(it.gameName||it.name||'').toLowerCase(); m.set(key,(m.get(key)||0)+1); }); return m; };
-      const buildsCount = byGame(builds), toolsCount = byGame(tools);
+      const byGame = list => { const m=new Map(); (list.items||[]).forEach(it=>{ const k=(it.gameName||it.name||'').toLowerCase(); m.set(k,(m.get(k)||0)+1); }); return m; };
+      const bc = byGame(builds), tc = byGame(tools);
 
-      this.clear(this.cfg.sel.games); const root=document.querySelector(this.cfg.sel.games); if(!root) return;
+      this.clear(this.cfg.sel.games);
+      const root=document.querySelector(this.cfg.sel.games); if(!root) return;
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(g=>{
         const slug=g.slug||(g.name||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=game&slug=${encodeURIComponent(slug)}`;
         const views=Views.get(`game:${slug}`);
         const key=(g.name||'').toLowerCase();
-        return CMS.tpl.gameCard({...g,_href:href,_views:views,_builds:buildsCount.get(key)||0,_tools:toolsCount.get(key)||0});
+        return CMS.tpl.gameCard({...g,_href:href,_views:views,_builds:bc.get(key)||0,_tools:tc.get(key)||0});
       }).join('');
     },
 
@@ -123,7 +144,6 @@
       const idx = await this.fetchIndex(this.cfg.buildsIndex);
       const items = idx.items || [];
       this.clear(this.cfg.sel.builds); const root=document.querySelector(this.cfg.sel.builds); if(!root) return;
-
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(b=>{
         const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=build&slug=${encodeURIComponent(slug)}`;
@@ -138,7 +158,6 @@
       const idx = await this.fetchIndex(this.cfg.guidesIndex);
       const items = idx.items || [];
       this.clear(this.cfg.sel.guides); const root=document.querySelector(this.cfg.sel.guides); if(!root) return;
-
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(x=>{
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=guide&slug=${encodeURIComponent(slug)}`;
@@ -151,7 +170,6 @@
       const idx = await this.fetchIndex(this.cfg.toolsIndex);
       const items = idx.items || [];
       this.clear(this.cfg.sel.tools); const root=document.querySelector(this.cfg.sel.tools); if(!root) return;
-
       root.innerHTML = items.slice(0, full?items.length:(limit||items.length)).map(t=>{
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=tool&slug=${encodeURIComponent(slug)}`;
@@ -160,7 +178,7 @@
       }).join('');
     },
 
-    // ------------- DÉTAIL -------------
+    // -------- DÉTAIL --------
     async renderDetail(){
       const u=new URL(location.href);
       const type=u.searchParams.get('type')||'game';
@@ -168,16 +186,8 @@
       const folder={game:'games',build:'builds',guide:'guides',tool:'tools'}[type]||'games';
       const root=document.getElementById('detail-root');
 
-      // essaie le fichier direct
       const tryFile = async()=>{ const url=this.cfg.basePrefix+`content/${folder}/${slug}.json`; const j=await this.fetchJSON(url); return j?{data:j}:null; };
-      // sinon retombe sur l’index
-      const tryIndex = async()=>{
-        const url = this.cfg.basePrefix+`content/${folder}/index.json`;
-        const idx = await this.fetchJSON(url);
-        if(!idx?.items) return null;
-        const hit = idx.items.find(x=>(x.slug||'').toLowerCase()===slug.toLowerCase());
-        return hit?{data:hit}:null;
-      };
+      const tryIndex=async()=>{ const idx=await this.fetchIndex(this.cfg.basePrefix+`content/${folder}/index.json`); const hit=idx.items.find(x=>(x.slug||'').toLowerCase()===slug.toLowerCase()); return hit?{data:hit}:null; };
 
       const found = (await tryFile()) || (await tryIndex());
       if(!found){ root.innerHTML='<p style="color:#f87171">Contenu introuvable.</p>'; return; }
@@ -234,7 +244,6 @@
 
     // -------- Templates --------
     tpl:{
-      // Toujours un <img> OU un placeholder (jamais du texte brut)
       imgBlock(src, alt){
         const safeAlt = (alt || '').replace(/"/g,'&quot;');
         if (!src) return '<div class="media-ph"></div>';
@@ -252,7 +261,7 @@
       gameCard(g){
         const slug=g.slug||(g.name||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=game&slug=${encodeURIComponent(slug)}`;
-        const key=`game:${slug}`, views=g._views||0;
+        const views=g._views||0;
         const publisher=(g.publisher||this.inferPublisherFromName(g.name)).toUpperCase();
         return `${href}
           <div class="card-media">
@@ -272,7 +281,7 @@
       buildCard(b){
         const slug=b.slug||(b.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=build&slug=${encodeURIComponent(slug)}`;
-        const key=`build:${slug}`, views=b._views||0;
+        const views=b._views||0;
         const starRow=Array.from({length:5},(_,i)=>ICONS.star(i<(b._stars||3))).join('');
         const coinRow=Array.from({length:5},(_,i)=>ICONS.coin(i<(b._coins||0))).join('');
         const publisher=(b.publisher||this.inferPublisherFromName(b.gameName||'')).toUpperCase();
@@ -298,7 +307,7 @@
       guideCard(x){
         const slug=x.slug||(x.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=guide&slug=${encodeURIComponent(slug)}`;
-        const key=`guide:${slug}`, views=x._views||0;
+        const views=x._views||0;
         return `${href}
           <div class="card-media">
             ${x.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(x.cover), x.title):'<div class="media-ph"></div>'}
@@ -317,7 +326,7 @@
       toolCard(t){
         const slug=t.slug||(t.title||'').toLowerCase().replace(/\s+/g,'-');
         const href=`detail.html?type=tool&slug=${encodeURIComponent(slug)}`;
-        const key=`tool:${slug}`, views=t._views||0;
+        const views=t._views||0;
         return `${href}
           <div class="card-media">
             ${t.cover?CMS.tpl.imgBlock(CMS.normalizeAsset(t.cover), t.title):'<div class="media-ph"></div>'}
@@ -335,9 +344,11 @@
     }
   };
 
-  // Expose global + util reset
+  // Expose global (reset des vues possible depuis la console)
   window.CMS_LOADER = CMS;
-  // auto‑init
+  window.CMS_LOADER_RESET_VIEWS = () => Views.resetAll();
+
+  // Auto-init (aucune init dans l'HTML)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => CMS.init());
   } else {
