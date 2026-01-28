@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Aegis Arena",
+    "url": "/jeux/aegis-arena",
+    "image": "/assets/jeux/aegis-arena.jpg",
+    "excerpt": "Arena shooter tactique en 3v3."
+  },
+  {
+    "id": 2,
+    "title": "Mystic Vale",
+    "url": "/jeux/mystic-vale",
+    "image": "/assets/jeux/mystic-vale.jpg",
+    "excerpt": "Deckbuilding rapide et nerveux."
+  },
+  {
+    "id": 3,
+    "title": "Orbital Drift",
+    "url": "/jeux/orbital-drift",
+    "image": "/assets/jeux/orbital-drift.jpg",
+    "excerpt": "Course anti-gravité en solo/online."
+  }
+]

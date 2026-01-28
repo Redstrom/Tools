@@ -1,0 +1,27 @@
+[
+  {
+    "id": "action",
+    "name": "Action",
+    "slug": "action"
+  },
+  {
+    "id": "aventure",
+    "name": "Aventure",
+    "slug": "aventure"
+  },
+  {
+    "id": "arcade",
+    "name": "Arcade",
+    "slug": "arcade"
+  },
+  {
+    "id": "strategie",
+    "name": "Stratégie",
+    "slug": "strategie"
+  },
+  {
+    "id": "rpg",
+    "name": "RPG",
+    "slug": "rpg"
+  }
+]
