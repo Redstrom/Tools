@@ -1,47 +1,48 @@
-media_folder: "assets/media"
-public_folder: "/assets/media"
+media:
+  input: "assets/media"
+  output: "/assets/media"
 
 collections:
-  - label: "Jeux"
-    name: "games"
-    folder: "content/games"
+  - name: "games"
+    label: "Jeux"
+    type: "directory"
+    path: "content/games"
     create: true
-    extension: "json"
     format: "json"
-    slug: "{{slug}}"
+    extension: "json"
     fields:
-      - { label: "Nom",  name: "name", widget: "string" }
-      - { label: "Slug", name: "slug", widget: "string" }
+      - { name: "name", label: "Nom",  type: "string" }
+      - { name: "slug", label: "Slug", type: "string" }
 
-  - label: "Builds"
-    name: "builds"
-    folder: "content/builds"
+  - name: "builds"
+    label: "Builds"
+    type: "directory"
+    path: "content/builds"
     create: true
-    extension: "json"
     format: "json"
-    slug: "{{slug}}"
+    extension: "json"
     fields:
-      - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Slug",  name: "slug",  widget: "string" }
+      - { name: "title", label: "Titre", type: "string" }
+      - { name: "slug",  label: "Slug",  type: "string" }
 
-  - label: "Guides"
-    name: "guides"
-    folder: "content/guides"
+  - name: "guides"
+    label: "Guides"
+    type: "directory"
+    path: "content/guides"
     create: true
-    extension: "json"
     format: "json"
-    slug: "{{slug}}"
+    extension: "json"
     fields:
-      - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Slug",  name: "slug",  widget: "string" }
+      - { name: "title", label: "Titre", type: "string" }
+      - { name: "slug",  label: "Slug",  type: "string" }
 
-  - label: "Outils"
-    name: "tools"
-    folder: "content/tools"
+  - name: "tools"
+    label: "Outils"
+    type: "directory"
+    path: "content/tools"
     create: true
-    extension: "json"
     format: "json"
-    slug: "{{slug}}"
+    extension: "json"
     fields:
-      - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Slug",  name: "slug",  widget: "string" }
+      - { name: "title", label: "Titre", type: "string" }
+      - { name: "slug",  label: "Slug",  type: "string" }
