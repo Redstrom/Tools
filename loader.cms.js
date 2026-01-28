@@ -2,7 +2,7 @@
   // =========================
   // CONFIG & VERSIONING
   // =========================
-  const VERSION = 'v10.1';
+  const VERSION = 'v10.2';
   const FILE    = 'loader.cms.js';
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
@@ -233,11 +233,11 @@
 
     // ---------------- Templates ----------------
     tpl:{
-      // TOUJOURS un <img> (ou un placeholder)
+      // TOUJOURS un <img> (ou un placeholder) – fini les URL en texte
       imgBlock(src, alt){
         const safeAlt = (alt || '').replace(/"/g,'&quot;');
         if (!src) return '<div class="media-ph"></div>';
-        return `${src}" alt="${safeAlt}" class="h-full w-full object-cover">`;
+        return `<img src="${src}" alt="${safeAlt}" loading="lazy" decoding="async" class="h-full w-full object-cover">`;
       },
 
       badge(t,cls='badge-pill'){ return `<span class="${cls}">${t}</span>`; },
