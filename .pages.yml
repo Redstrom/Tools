@@ -93,3 +93,28 @@ content:
           - { name: tip, label: Conseil, type: string }
       - { name: body, label: Guide détaillé, type: rich-text }
       - { name: date, label: Date, type: date }
+
+  - name: tools
+    label: Outils
+    type: collection
+    path: content/tools
+    filename: "{slug}.json"
+    view:
+      fields: [ title, game, kind ]
+      primary: title
+      sort: [ title ]
+    fields:
+      - { name: title, label: Titre, type: string, required: true }
+      - name: game
+        label: Jeu
+        type: reference
+        options:
+          collection: games
+          search: "name,slug"
+          value: "{path}"
+          label: "{name}"
+      - { name: kind, label: Type, type: select, options: [Overlay, Config, Addon, Guide, App], default: App }
+      - { name: url, label: Lien, type: string, required: true }
+      - { name: author, label: Auteur/Fournisseur, type: string }
+      - { name: notes, label: Notes rapides, type: text, options: { rows: 2 } }
+      - { name: body, label: Détails, type: rich-text }
