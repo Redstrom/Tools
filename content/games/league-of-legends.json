@@ -4,17 +4,6 @@
   "status": "actif",
   "cover": "assets/media/lol-cover.jpg",
   "short": "MOBA compétitif en 5v5.",
-  "platforms": [
-    {
-      "name": "PC"
-    }
-  ],
-  "tags": [
-    {
-      "tag": "MOBA"
-    },
-    {
-      "tag": "Compétitif"
-    }
-  ]
+  "platforms": [{ "name": "PC" }],
+  "tags": [{ "tag": "MOBA" }, { "tag": "Compétitif" }]
 }
