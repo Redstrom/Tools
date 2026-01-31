@@ -49,9 +49,11 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
+            params: {}
             results: "items"
-          value: "slug"
-          label: "{{name}}"
+            value: "slug"
+            label: "name"
+            image: "cover"
 
       - name: tier
         label: "Tier"
@@ -100,9 +102,11 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
+            params: {}
             results: "items"
-          value: "slug"
-          label: "{{name}}"
+            value: "slug"
+            label: "name"
+            image: "cover"
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
       - { name: cover,    label: "Cover (16:9)", type: image, required: false }
@@ -137,12 +141,15 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
+            params: {}
             results: "items"
-          value: "slug"
-          label: "{{name}}"
+            value: "slug"
+            label: "name"
+            image: "cover"
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
 
