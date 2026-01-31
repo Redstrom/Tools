@@ -4,6 +4,18 @@ import path from 'node:path';
 
 const CONTENT = path.resolve('content');
 
+const EXTRA_KEYS = ['items', 'itemList', 'tags', 'urls', 'links', 'body', 'bodyHtml', 'bodyText'];
+
+function pickExtras(src) {
+  const out = {};
+  for (const k of EXTRA_KEYS) {
+    if (src && Object.prototype.hasOwnProperty.call(src, k) && src[k] != null) {
+      out[k] = src[k];
+    }
+  }
+  return out;
+}
+
 async function readJSON(p) {
   try { return JSON.parse(await fs.readFile(p, 'utf8')); }
   catch { return null; }
@@ -79,7 +91,9 @@ async function buildGames() {
       status: data.status || 'actif',
       cover: data.cover || '',
       short: data.short || '',
-      publisher: data.publisher || ''
+      publisher: data.publisher || '',
+    
+      ...pickExtras(data)
     });
   }
   items.sort((a, b) => cmpStr(a.name, b.name));
@@ -109,15 +123,15 @@ async function buildBuilds(gamesMap) {
       summary: data.summary || '',
       cover: data.cover || '',
       updatedAt: data.updatedAt || '',
-      // difficulty
       difficulty: data.difficulty || '',
       difficultyStars: data.difficultyStars ?? null,
       cost: data.cost ?? null,
-
-      // linkage
+    
       gameName: gm.slug || gameNameSlug,
       gameDisplayName: gm.name || '',
-      gameStatus: gm.status || 'actif'
+      gameStatus: gm.status || 'actif',
+    
+      ...pickExtras(data)
     });
   }
   // Sort: updatedAt desc, then title
@@ -151,7 +165,9 @@ async function buildGuides(gamesMap) {
 
       gameName: gm.slug || gameNameSlug,
       gameDisplayName: gm.name || '',
-      gameStatus: gm.status || 'actif'
+      gameStatus: gm.status || 'actif',
+    
+      ...pickExtras(data)
     });
   }
   // Sort: date desc, then title
@@ -185,7 +201,9 @@ async function buildTools(gamesMap) {
 
       gameName: gm.slug || gameNameSlug,
       gameDisplayName: gm.name || '',
-      gameStatus: gm.status || 'actif'
+      gameStatus: gm.status || 'actif',
+    
+      ...pickExtras(data)
     });
   }
   // Sort: title asc
