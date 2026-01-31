@@ -51,6 +51,8 @@ content:
             results: "items"
           value: "slug"
           label: "{{name}}"
+          required: true
+          multiple: false
 
       - name: tier
         label: "Tier"
@@ -140,6 +142,7 @@ content:
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
 
