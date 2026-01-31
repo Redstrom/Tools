@@ -161,6 +161,7 @@
 
     // ---------- Templates ----------
     tpl: {
+
       img(src, alt) {
         const safeAlt = (alt || '').replace(/"/g, '"');
         if (!src) return '<div class="media-ph"></div>';
