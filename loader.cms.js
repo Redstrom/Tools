@@ -634,7 +634,7 @@
         const games = await this.loadIndex('games');
         const g = games.find(x => String(x.slug).toLowerCase() === gslug.toLowerCase());
         const gName = g?.name || gslug.toUpperCase();
-        gameLinkHtml = `<a><p style="margin:12px 0 0">${this.buildHref(Voir la fiche ${gName}</a></p>`;
+        gameLinkHtml = `<a<p style="margin:12px 0 0">${this.buildHref(Voir la fiche ${gName}</a></p>`;
       }
 
       let body = '';
