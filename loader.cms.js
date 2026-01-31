@@ -2,14 +2,13 @@
   // =========================
   // CONFIG & VERSION
   // =========================
-  const VERSION = 'v11.1';
+  const VERSION = 'v11.2';
   const FILE = 'loader.cms.js';
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
   // =========================
   // ICONS
   // =========================
-  // Coin avec bord, relief et reflet (lisible sur fond sombre)
   const ICONS = {
     eye:
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#9CA3AF" d="M12 5c5.5 0 9.2 4.4 10 6-.8 1.6-4.5 6-10 6S2.8 12.6 2 11c.8-1.6 4.5-6 10-6Zm0 2C8.3 7 5.4 9.7 4.3 11 5.4 12.3 8.3 15 12 15s6.6-2.7 7.7-4C18.6 9.7 15.7 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>',
@@ -17,10 +16,9 @@
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" aria-hidden="true"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
     starEmpty:
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
-    // Pièce "réaliste" (bord, anneau, reflet). Variante pleine
+    // Pièce avec relief/reflet (lisible sur fond sombre)
     coinFilled:
       '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#eab308"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#g1)"/><circle cx="12" cy="12" r="8" fill="none" stroke="#a16207" stroke-width="1.25"/><path d="M7.5 9.2c1.2-.8 2.9-1.2 4.5-1.2 1.6 0 3.3.4 4.5 1.2" fill="none" stroke="#fef9c3" stroke-opacity=".9" stroke-width="1" stroke-linecap="round"/></svg>',
-    // Variante vide (anneau)
     coinEmpty:
       '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#eab308" stroke-width="1.5"/><circle cx="12" cy="12" r="8" fill="none" stroke="#a16207" stroke-width="1.25"/></svg>',
   };
@@ -46,7 +44,8 @@
   // VIEWS API (Supabase - Edge Function)
   // =========================
   const ViewsAPI = {
-    EDGE_URL: 'https://eiuhpfmgdziqhycgcgsy.supabase.co/functions/v1/views',
+    // ⚠️ REMPLACE <PROJECT-REF> par l’identifiant de ton projet (ex: abcdxyz)
+    EDGE_URL: 'https://<PROJECT-REF>.functions.supabase.co/views',
 
     async fetchTotals(keys = []) {
       try {
@@ -60,9 +59,7 @@
         for (const k of keys) out.set(k, Number(j?.totals?.[k] || 0));
         return out;
       } catch {
-        const out = new Map();
-        keys.forEach((k) => out.set(k, 0));
-        return out;
+        const out = new Map(); keys.forEach(k => out.set(k, 0)); return out;
       }
     },
 
@@ -76,9 +73,7 @@
         });
         if (!r.ok) throw new Error(String(r.status));
         return true;
-      } catch {
-        return false;
-      }
+      } catch { return false; }
     },
   };
 
@@ -123,7 +118,7 @@
       });
 
       const hinted = document.querySelector('meta[name="cms:page"]')?.content?.trim();
-      this.cfg.page = hinted || this.autodetectPage();
+      this.cfg.page = hinted || this.autodetectPage(); // ← IMPORTANT
 
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => this.run());
       else this.run();
@@ -145,9 +140,7 @@
         if (!r.ok) throw new Error(r.status);
         const j = await r.json();
         return Array.isArray(j) ? { items: j } : j;
-      } catch {
-        return null;
-      }
+      } catch { return null; }
     },
 
     async loadIndex(key) {
@@ -168,22 +161,19 @@
     // util: path "content/games/xxx.json" -> "xxx"
     pathToSlug(s = '') {
       const m = String(s).match(/content\/games\/([^/]+)\.json$/i);
-      return m ? m[1] : s || '';
+      return m ? m[1] : (s || '');
     },
 
     // ------------- Templates -------------
     tpl: {
-
-img(src, alt) {
-  const safeAlt = (alt || '').replace(/"/g, '"');
-  if (!src) return '<div class="media-ph"></div>';
-  const url = CMS.normalizeAsset(src);
-  return `<img src="${url}" alt="${safeAlt}" loading="lazy" decoding="async" class="h-full w-full object-cover">`;
-},
-
-      badge(t, cls = 'badge-pill') {
-        return `<span class="${cls}">${t}</span>`;
+      img(src, alt) {
+        const safeAlt = (alt || '').replace(/"/g, '"');
+        if (!src) return '<div class="media-ph"></div>';
+        const url = CMS.normalizeAsset(src);
+        return `<img src="${url}" alt="${safeAlt}" loading="lazy" decoding="async" class="h-full w-full object-cover">`;
       },
+
+      badge(t, cls = 'badge-pill') { return `<span class="${cls}">${t}</span>`; },
 
       gameCard(g, href, views = 0) {
         return `<a href="${href}" class="card--game">
@@ -204,13 +194,7 @@ img(src, alt) {
       },
 
       buildCard(b, href, views = 0) {
-        const stars = Math.max(
-          1,
-          Math.min(
-            5,
-            Number.isFinite(+b.difficultyStars) && +b.difficultyStars > 0 ? +b.difficultyStars : CMS.starsFromDifficulty(b.difficulty)
-          )
-        );
+        const stars = Math.max(1, Math.min(5, Number.isFinite(+b.difficultyStars) && +b.difficultyStars > 0 ? +b.difficultyStars : CMS.starsFromDifficulty(b.difficulty)));
         const coins = Math.max(0, Math.min(5, Number.isFinite(+b.cost) ? +b.cost : 0));
         const starRow = Array.from({ length: 5 }, (_, i) => (i < stars ? ICONS.starFilled : ICONS.starEmpty)).join('');
         const coinRow = Array.from({ length: 5 }, (_, i) => (i < coins ? ICONS.coinFilled : ICONS.coinEmpty)).join('');
@@ -310,24 +294,13 @@ img(src, alt) {
     // ------------- RUN -------------
     async run() {
       switch (this.cfg.page) {
-        case 'games':
-          await this.setupListPage('games');
-          break;
-        case 'builds':
-          await this.setupListPage('builds');
-          break;
-        case 'guides':
-          await this.setupListPage('guides');
-          break;
-        case 'tools':
-          await this.setupListPage('tools');
-          break;
-        case 'detail':
-          await this.renderDetail();
-          break;
+        case 'games':  await this.setupListPage('games');  break;
+        case 'builds': await this.setupListPage('builds'); break;
+        case 'guides': await this.setupListPage('guides'); break;
+        case 'tools':  await this.setupListPage('tools');  break;
+        case 'detail': await this.renderDetail();          break;
         case 'home':
-        default:
-          break;
+        default: break;
       }
     },
 
@@ -368,28 +341,16 @@ img(src, alt) {
       };
 
       let t = null;
-      const onSearch = () => {
-        clearTimeout(t);
-        t = setTimeout(apply, 200);
-      };
+      const onSearch = () => { clearTimeout(t); t = setTimeout(apply, 200); };
 
       if (searchInput) searchInput.addEventListener('input', onSearch);
       this.bindFilterEvents(type, apply);
 
-      if (obs.list) {
-        try {
-          obs.list.disconnect();
-        } catch {}
-      }
+      if (obs.list) { try { obs.list.disconnect(); } catch {} }
       if (sentinel) {
-        obs.list = new IntersectionObserver(
-          async (entries) => {
-            for (const ent of entries) {
-              if (ent.isIntersecting) await this.renderNextBatch(type, state, root);
-            }
-          },
-          { root: null, rootMargin: '800px 0px', threshold: 0 }
-        );
+        obs.list = new IntersectionObserver(async (entries) => {
+          for (const ent of entries) if (ent.isIntersecting) await this.renderNextBatch(type, state, root);
+        }, { root: null, rootMargin: '800px 0px', threshold: 0 });
         obs.list.observe(sentinel);
       }
 
@@ -399,9 +360,7 @@ img(src, alt) {
     setupFilterOptions(type, games) {
       const gameSel = document.getElementById('filter-game');
       if (gameSel && Array.isArray(games)) {
-        const opts = ['<option value="">Jeu: Tous</option>'].concat(
-          games.map((g) => `<option value="${g.slug}">${g.name}</option>`)
-        );
+        const opts = ['<option value="">Jeu: Tous</option>'].concat(games.map(g => `<option value="${g.slug}">${g.name}</option>`));
         gameSel.innerHTML = opts.join('');
       }
     },
@@ -412,71 +371,59 @@ img(src, alt) {
       o.includeArchived = !!arch?.checked;
 
       if (type !== 'games') {
-        const g = document.getElementById('filter-game');
-        if (g) o.game = g.value || '';
+        const g = document.getElementById('filter-game');   if (g) o.game = g.value || '';
       }
       if (type === 'builds') {
-        const t = document.getElementById('filter-tier');
-        if (t) o.tier = t.value || '';
-        const v = document.getElementById('filter-version');
-        if (v) o.version = v.value?.trim() || '';
+        const t = document.getElementById('filter-tier');   if (t) o.tier = t.value || '';
+        const v = document.getElementById('filter-version');if (v) o.version = v.value?.trim() || '';
       }
       if (type === 'tools') {
-        const k = document.getElementById('filter-kind');
-        if (k) o.kind = k.value || '';
+        const k = document.getElementById('filter-kind');   if (k) o.kind = k.value || '';
       }
       if (type === 'games') {
-        const s = document.getElementById('filter-status');
-        if (s) o.status = s.value || '';
+        const s = document.getElementById('filter-status'); if (s) o.status = s.value || '';
       }
       return o;
     },
 
-// Aplatis tout l'objet (récursif) -> concat de toutes les valeurs textuelles
-flattenForSearch(it) {
-  const out = [];
-  const seen = new Set();
-  const walk = (v) => {
-    if (v == null) return;
-    const t = typeof v;
-    if (t === 'string' || t === 'number' || t === 'boolean') {
-      out.push(String(v));
-      return;
-    }
-    if (Array.isArray(v)) {
-      v.forEach(walk);
-      return;
-    }
-    if (t === 'object') {
-      if (seen.has(v)) return;    // évite les cycles
-      seen.add(v);
-      for (const [k, val] of Object.entries(v)) {
-        // ignore les champs techniques internes du loader
-        if (k.startsWith('_') || k === '__blob') continue;
-        walk(val);
-      }
-    }
-  };
-  walk(it);
-  return out.join(' ');
-},
+    // ---- Recherche générique : blob (toutes les props) ----
+    flattenForSearch(it) {
+      const out = [];
+      const seen = new Set();
+      const walk = (v) => {
+        if (v == null) return;
+        const t = typeof v;
+        if (t === 'string' || t === 'number' || t === 'boolean') { out.push(String(v)); return; }
+        if (Array.isArray(v)) { v.forEach(walk); return; }
+        if (t === 'object') {
+          if (seen.has(v)) return;
+          seen.add(v);
+          for (const [k, val] of Object.entries(v)) {
+            if (k.startsWith('_') || k === '__blob') continue; // ignore champs techniques
+            walk(val);
+          }
+        }
+      };
+      walk(it);
+      return out.join(' ');
+    },
 
-// Renvoie le blob normalisé et le met en cache sur l’item
-getSearchBlob(it) {
-  if (it.__blob) return it.__blob; // déjà préparé
-  const blob = Text.norm(this.flattenForSearch(it));
-  Object.defineProperty(it, '__blob', { value: blob, enumerable: false });
-  return blob;
-},
-    
+    getSearchBlob(it) {
+      if (it.__blob) return it.__blob; // déjà calculé
+      const blob = Text.norm(this.flattenForSearch(it));
+      Object.defineProperty(it, '__blob', { value: blob, enumerable: false });
+      return blob;
+    },
+
     filterItems(type, list, query, filters) {
       const qTokens = Text.token(query);
       const keepArchived = !!filters.includeArchived;
 
       const keep = (it) => {
         if (type === 'games') {
-          if (!keepArchived && String(it.status || '').toLowerCase() === 'archive') return false;
-          if (filters.status && String(it.status || '').toLowerCase() !== String(filters.status)) return false;
+          const status = String(it.status || '').toLowerCase();
+          if (!keepArchived && status === 'archive') return false;
+          if (filters.status && status !== String(filters.status)) return false;
         } else {
           const gStatus = String(it.gameStatus || '').toLowerCase();
           if (!keepArchived && gStatus === 'archive') return false;
@@ -492,13 +439,11 @@ getSearchBlob(it) {
         }
 
         if (qTokens.length === 0) return true;
+        const hay = this.getSearchBlob(it);   // ← blob générique (toutes les props)
+        return qTokens.every(tk => hay.includes(tk));
+      };
 
-// 2) recherche (ET logique entre tokens)
-if (qTokens.length === 0) return true;
-const hay = CMS.getSearchBlob(it);
-return qTokens.every(tk => hay.includes(tk));
-
-      return list.filter(keep); // tri conservé depuis l’index
+      return list.filter(keep); // conserve le tri de l'index
     },
 
     async renderNextBatch(type, state, root) {
@@ -508,24 +453,22 @@ return qTokens.every(tk => hay.includes(tk));
       const chunk = state.filtered.slice(state.cursor, to);
       state.cursor = to;
 
-      const singular = type.slice(0, -1); // games->game, builds->build, etc.
-      const keys = chunk.map((it) => `${singular}:${it.slug}`);
-      let totals = new Map();
-      try {
-        totals = await ViewsAPI.fetchTotals(keys);
-      } catch {}
+      const singular = type.slice(0, -1); // games->game, builds->build, ...
+      const keys = chunk.map(it => `${singular}:${it.slug}`);
 
-      const html = chunk
-        .map((it) => {
-          const href = this.buildHref(singular, it.slug);
-          const vv = totals.get(`${singular}:${it.slug}`) || 0;
-          if (type === 'games') return this.tpl.gameCard(it, href, vv);
-          if (type === 'builds') return this.tpl.buildCard(it, href, vv);
-          if (type === 'guides') return this.tpl.guideCard(it, href, vv);
-          if (type === 'tools') return this.tpl.toolCard(it, href, vv);
-          return '';
-        })
-        .join('');
+      let totals = new Map();
+      try { totals = await ViewsAPI.fetchTotals(keys); }
+      catch { totals = new Map(); keys.forEach(k => totals.set(k, 0)); }
+
+      const html = chunk.map(it => {
+        const href = this.buildHref(singular, it.slug);
+        const vv = totals.get(`${singular}:${it.slug}`) || 0;
+        if (type === 'games')  return this.tpl.gameCard(it, href, vv);
+        if (type === 'builds') return this.tpl.buildCard(it, href, vv);
+        if (type === 'guides') return this.tpl.guideCard(it, href, vv);
+        if (type === 'tools')  return this.tpl.toolCard(it, href, vv);
+        return '';
+      }).join('');
       root.insertAdjacentHTML('beforeend', html);
 
       window.dispatchEvent(new CustomEvent('content:updated', { detail: { section: type, appended: chunk.length } }));
@@ -538,7 +481,7 @@ return qTokens.every(tk => hay.includes(tk));
       const u = new URL(location.href);
       const type = u.searchParams.get('type') || 'game';
       const slug = u.searchParams.get('slug') || '';
-      const folder = { game: 'games', build: 'builds', guide: 'guides', tool: 'tools' }[type] || 'games';
+      const folder = { game:'games', build:'builds', guide:'guides', tool:'tools' }[type] || 'games';
 
       const root = document.getElementById('detail-root');
       if (!root) return;
@@ -548,17 +491,11 @@ return qTokens.every(tk => hay.includes(tk));
       let head = data;
       if (!head) {
         const idx = await this.fetchJSON(this.cfg.basePrefix + `content/${folder}/index.json`);
-        head = idx?.items?.find((x) => String(x.slug || '').toLowerCase() === slug.toLowerCase()) || null;
+        head = idx?.items?.find(x => String(x.slug||'').toLowerCase() === slug.toLowerCase()) || null;
       }
-      if (!head) {
-        root.innerHTML = `<p style="color:#f87171">Contenu introuvable.</p>`;
-        return;
-      }
+      if (!head) { root.innerHTML = `<p style="color:#f87171">Contenu introuvable.</p>`; return; }
 
-      // Incrément des vues (1/jour/personne via Edge Function)
-      try {
-        await ViewsAPI.increment(type, slug);
-      } catch {}
+      try { await ViewsAPI.increment(type, slug); } catch {}
 
       const title = head.title || head.name || slug;
       let publisher = (head.publisher || head.studio || head.gameDisplayName || head.gameName || '').toString();
@@ -566,11 +503,11 @@ return qTokens.every(tk => hay.includes(tk));
         const gslug = this.pathToSlug(head.gameName || '');
         if (gslug) {
           const games = await this.loadIndex('games');
-          const g = games.find((x) => String(x.slug).toLowerCase() === gslug.toLowerCase());
+          const g = games.find(x => String(x.slug).toLowerCase() === gslug.toLowerCase());
           publisher = (g?.name || gslug).toString();
         }
       }
-      const status = type === 'game' ? head.status || 'Actif' : head.tier || head.status || '';
+      const status = (type === 'game' ? (head.status || 'Actif') : (head.tier || head.status || ''));
       const coverHtml = head.cover ? this.tpl.img(this.normalizeAsset(head.cover), title) : '<div class="media-ph"></div>';
 
       const hero = `
@@ -590,27 +527,21 @@ return qTokens.every(tk => hay.includes(tk));
       if (type === 'game') {
         const [builds, guides, tools] = await Promise.all([this.loadIndex('builds'), this.loadIndex('guides'), this.loadIndex('tools')]);
 
-        const byGame = (arr) => arr.filter((x) => String(x.gameName || '').toLowerCase() === slug.toLowerCase());
+        const byGame = (arr) => arr.filter(x => String(x.gameName||'').toLowerCase() === slug.toLowerCase());
 
-        const buildsF = byGame(builds)
-          .slice()
-          .sort((a, b) => {
-            const aa = String(a.updatedAt || '');
-            const bb = String(b.updatedAt || '');
-            return aa < bb ? 1 : aa > bb ? -1 : (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' });
-          });
-        const guidesF = byGame(guides)
-          .slice()
-          .sort((a, b) => {
-            const aa = String(a.date || '');
-            const bb = String(b.date || '');
-            return aa < bb ? 1 : aa > bb ? -1 : (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' });
-          });
-        const toolsF = byGame(tools)
-          .slice()
-          .sort((a, b) => (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' }));
+        const buildsF = byGame(builds).slice().sort((a,b)=>{
+          const aa = String(a.updatedAt||''); const bb = String(b.updatedAt||'');
+          return aa<bb?1:aa>bb?-1: (a.title||'').localeCompare(b.title||'', 'fr', {sensitivity:'base'});
+        });
+        const guidesF = byGame(guides).slice().sort((a,b)=>{
+          const aa = String(a.date||''); const bb = String(b.date||'');
+          return aa<bb?1:aa>bb?-1: (a.title||'').localeCompare(b.title||'', 'fr', {sensitivity:'base'});
+        });
+        const toolsF = byGame(tools).slice().sort((a,b)=>{
+          return (a.title||'').localeCompare(b.title||'', 'fr', {sensitivity:'base'});
+        });
 
-        const keep = (it) => String(it.gameStatus || '').toLowerCase() !== 'archive';
+        const keep = (it) => String(it.gameStatus||'').toLowerCase() !== 'archive';
         let showArchived = false;
 
         const columns = `
@@ -640,35 +571,29 @@ return qTokens.every(tk => hay.includes(tk));
         root.innerHTML = hero + columns;
 
         const stateCols = {
-          bAll: buildsF,
-          gAll: guidesF,
-          tAll: toolsF,
-          bCur: 0,
-          gCur: 0,
-          tCur: 0,
+          bAll: buildsF, gAll: guidesF, tAll: toolsF,
+          bCur: 0, gCur: 0, tCur: 0,
           pageSize: this.cfg.pageSize,
         };
 
-        const elB = () => document.getElementById('col-builds');
-        const elG = () => document.getElementById('col-guides');
-        const elT = () => document.getElementById('col-tools');
-        const emptyB = () => document.getElementById('empty-builds');
-        const emptyG = () => document.getElementById('empty-guides');
-        const emptyT = () => document.getElementById('empty-tools');
-        const spinner = () => document.getElementById('game-spinner');
+        const elB = ()=>document.getElementById('col-builds');
+        const elG = ()=>document.getElementById('col-guides');
+        const elT = ()=>document.getElementById('col-tools');
+        const emptyB = ()=>document.getElementById('empty-builds');
+        const emptyG = ()=>document.getElementById('empty-guides');
+        const emptyT = ()=>document.getElementById('empty-tools');
+        const spinner = ()=>document.getElementById('game-spinner');
 
         const applyArch = () => {
-          const filt = (arr) => (showArchived ? arr : arr.filter(keep));
+          const filt = (arr) => showArchived ? arr : arr.filter(keep);
           stateCols.bAll = filt(buildsF);
           stateCols.gAll = filt(guidesF);
           stateCols.tAll = filt(toolsF);
           stateCols.bCur = stateCols.gCur = stateCols.tCur = 0;
-          elB().innerHTML = '';
-          elG().innerHTML = '';
-          elT().innerHTML = '';
-          emptyB().hidden = stateCols.bAll.length > 0;
-          emptyG().hidden = stateCols.gAll.length > 0;
-          emptyT().hidden = stateCols.tAll.length > 0;
+          elB().innerHTML = ''; elG().innerHTML = ''; elT().innerHTML = '';
+          emptyB().hidden = stateCols.bAll.length>0;
+          emptyG().hidden = stateCols.gAll.length>0;
+          emptyT().hidden = stateCols.tAll.length>0;
           renderMore();
         };
 
@@ -684,58 +609,36 @@ return qTokens.every(tk => hay.includes(tk));
           const [bChunk, bTo] = take(stateCols.bAll, stateCols.bCur);
           const [gChunk, gTo] = take(stateCols.gAll, stateCols.gCur);
           const [tChunk, tTo] = take(stateCols.tAll, stateCols.tCur);
-          stateCols.bCur = bTo;
-          stateCols.gCur = gTo;
-          stateCols.tCur = tTo;
+          stateCols.bCur = bTo; stateCols.gCur = gTo; stateCols.tCur = tTo;
 
           const keys = []
-            .concat(bChunk.map((i) => `build:${i.slug}`))
-            .concat(gChunk.map((i) => `guide:${i.slug}`))
-            .concat(tChunk.map((i) => `tool:${i.slug}`));
+            .concat(bChunk.map(i=>`build:${i.slug}`))
+            .concat(gChunk.map(i=>`guide:${i.slug}`))
+            .concat(tChunk.map(i=>`tool:${i.slug}`));
           let totals = new Map();
-          try {
-            totals = await ViewsAPI.fetchTotals(keys);
-          } catch {}
+          try { totals = await ViewsAPI.fetchTotals(keys); } catch { totals = new Map(); keys.forEach(k=>totals.set(k,0)); }
 
-          const bHTML = bChunk
-            .map((i) => this.tpl.compactCard(i, this.buildHref('build', i.slug), (totals.get(`build:${i.slug}`) || 0).toLocaleString('fr-FR')))
-            .join('');
-          const gHTML = gChunk
-            .map((i) => this.tpl.compactCard(i, this.buildHref('guide', i.slug), (totals.get(`guide:${i.slug}`) || 0).toLocaleString('fr-FR')))
-            .join('');
-          const tHTML = tChunk
-            .map((i) => this.tpl.compactCard(i, this.buildHref('tool', i.slug), (totals.get(`tool:${i.slug}`) || 0).toLocaleString('fr-FR')))
-            .join('');
+          const bHTML = bChunk.map(i => this.tpl.compactCard(i, this.buildHref('build', i.slug), (totals.get(`build:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
+          const gHTML = gChunk.map(i => this.tpl.compactCard(i, this.buildHref('guide', i.slug), (totals.get(`guide:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
+          const tHTML = tChunk.map(i => this.tpl.compactCard(i, this.buildHref('tool',  i.slug), (totals.get(`tool:${i.slug}`) ||0).toLocaleString('fr-FR'))).join('');
 
           elB().insertAdjacentHTML('beforeend', bHTML);
           elG().insertAdjacentHTML('beforeend', gHTML);
           elT().insertAdjacentHTML('beforeend', tHTML);
 
           spinner().hidden = true;
-          window.dispatchEvent(
-            new CustomEvent('content:updated', { detail: { section: 'game-columns', appended: bChunk.length + gChunk.length + tChunk.length } })
-          );
+          window.dispatchEvent(new CustomEvent('content:updated', { detail: { section:'game-columns', appended: bChunk.length+gChunk.length+tChunk.length } }));
         };
 
         const toggle = document.getElementById('toggle-archived');
-        if (toggle) toggle.addEventListener('change', () => {
-          showArchived = !!toggle.checked;
-          applyArch();
-        });
+        if (toggle) toggle.addEventListener('change', ()=>{ showArchived = !!toggle.checked; applyArch(); });
 
         const sentinel = document.getElementById('infinite-sentinel');
-        if (this.state.observers.gameCols) {
-          try {
-            this.state.observers.gameCols.disconnect();
-          } catch {}
-        }
+        if (this.state.observers.gameCols) { try { this.state.observers.gameCols.disconnect(); } catch{} }
         if (sentinel) {
-          this.state.observers.gameCols = new IntersectionObserver(
-            async (entries) => {
-              for (const ent of entries) if (ent.isIntersecting) await renderMore();
-            },
-            { root: null, rootMargin: '800px 0px', threshold: 0 }
-          );
+          this.state.observers.gameCols = new IntersectionObserver(async (entries) => {
+            for (const ent of entries) if (ent.isIntersecting) await renderMore();
+          }, { root:null, rootMargin:'800px 0px', threshold:0 });
           this.state.observers.gameCols.observe(sentinel);
         }
 
@@ -744,21 +647,21 @@ return qTokens.every(tk => hay.includes(tk));
       }
 
       // Détail build/guide/tool : lien vers le jeu + sections spécifiques
-      const gslug = this.pathToSlug((head.gameName || '').toString());
+      const gslug = this.pathToSlug((head.gameName||'').toString());
       let gameLinkHtml = '';
       if (gslug) {
         const games = await this.loadIndex('games');
-        const g = games.find((x) => String(x.slug).toLowerCase() === gslug.toLowerCase());
+        const g = games.find(x => String(x.slug).toLowerCase() === gslug.toLowerCase());
         const gName = g?.name || gslug.toUpperCase();
         gameLinkHtml = `<p style="margin:12px 0 0"><a class="btn" href="${this.buildHref('game', gslug)}">Voir la fiche ${gName}</a></p>`;
       }
 
       let body = '';
-      if (type === 'build') {
+      if (type==='build') {
         const stars = Math.max(1, Math.min(5, Number.isFinite(+head.difficultyStars) && +head.difficultyStars > 0 ? +head.difficultyStars : this.starsFromDifficulty(head.difficulty)));
         const coins = Math.max(0, Math.min(5, Number.isFinite(+head.cost) ? +head.cost : 0));
-        const starRow = Array.from({ length: 5 }, (_, i) => (i < stars ? ICONS.starFilled : ICONS.starEmpty)).join('');
-        const coinRow = Array.from({ length: 5 }, (_, i) => (i < coins ? ICONS.coinFilled : ICONS.coinEmpty)).join('');
+        const starRow = Array.from({length:5},(_,i)=> i<stars?ICONS.starFilled:ICONS.starEmpty).join('');
+        const coinRow = Array.from({length:5},(_,i)=> i<coins?ICONS.coinFilled:ICONS.coinEmpty).join('');
         body += `
           <section class="section"><h3>Difficulté</h3><div class="stars">${starRow}</div></section>
           <section class="section"><h3>Coût</h3><div class="coins">${coinRow}</div></section>
@@ -773,8 +676,8 @@ return qTokens.every(tk => hay.includes(tk));
     // ======== LIST FILTER WIRING ==========
     // ======================================
     bindFilterEvents(type, apply) {
-      const ids = ['filter-game', 'filter-tier', 'filter-version', 'filter-kind', 'filter-status', 'toggle-archived'];
-      ids.forEach((id) => {
+      const ids = ['filter-game','filter-tier','filter-version','filter-kind','filter-status','toggle-archived'];
+      ids.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('change', apply);
       });
