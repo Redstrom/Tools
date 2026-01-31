@@ -47,7 +47,7 @@ content:
         options:
           collection: games
           multiple: false
-          value: "{path}"
+          value: "{name}"
           label: "{name}"
       - name: tier
         label: "Tier"
@@ -92,7 +92,7 @@ content:
         options:
           collection: games
           multiple: false
-          value: "{path}"
+          value: "{name}"
           label: "{name}"
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
@@ -127,10 +127,11 @@ content:
         options:
           collection: games
           multiple: false
-          value: "{path}"
+          value: "{name}"
           label: "{name}"
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
 
