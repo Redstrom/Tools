@@ -1,4 +1,3 @@
-<script>
 (async () => {
   // Détecte le préfixe GitHub Pages (/Tools/) pour charger le fragment au bon endroit
   const parts = location.pathname.split('/').filter(Boolean);
@@ -38,4 +37,3 @@
   const el = document.getElementById('page-label');
   if (el) el.textContent = label;
 })();
-</script>
