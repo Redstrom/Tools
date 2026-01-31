@@ -7,12 +7,15 @@ body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-app
 a{color:#22c55e;text-decoration:none}
 a:hover{text-decoration:underline}
 .container{max-width:1536px;margin:0 auto;padding:0 16px} /* élargi à 1536px */
-.logo-box{
-  width:32px;height:28px;border-radius:8px;
-  display:grid; place-items:center;       /* centrage parfait */
-  background:#22c55e; color:#000; font-weight:900;
-}
-.logo-char{ font-size:20px; line-height:1; }
+.site-header{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(11,12,13,.6);border-bottom:1px solid var(--border)}
+.logo-box{width:32px;height:28px;border-radius:8px;display:grid;place-items:center;background:#22c55e;color:#000;font-weight:900;}
+.logo-char{font-size:20px;line-height:1;}
+.site-title{font-weight:800;letter-spacing:-.02em}
+.site-title .t-green{color:#22c55e}
+.site-title .t-red{color:#ff0a0a;margin-left:4px}
+.main-nav a{display:inline-flex;padding:10px 8px;border-radius:8px}
+.main-nav a:hover{background:rgba(255,255,255,.06)}
+.main-nav a.active{background:rgba(255,255,255,.08)}
 header{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(11,12,13,.6);border-bottom:1px solid var(--border)}
 .hstack{display:flex;align-items:center;gap:16px}.spacer{flex:1}
 nav a{display:inline-flex;padding:10px 8px;border-radius:8px}
