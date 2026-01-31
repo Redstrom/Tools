@@ -2,7 +2,7 @@
   // =========================
   // CONFIG & VERSION
   // =========================
-  const VERSION = 'v11.4';
+  const VERSION = 'v11.6';
   const FILE = 'loader.cms.js';
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
@@ -16,7 +16,7 @@
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" aria-hidden="true"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
     starEmpty:
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
-    // Pièce avec relief/reflet
+    // Pièce avec relief/reflet (lisible sur fond sombre)
     coinFilled:
       '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#eab308"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#g1)"/><circle cx="12" cy="12" r="8" fill="none" stroke="#a16207" stroke-width="1.25"/><path d="M7.5 9.2c1.2-.8 2.9-1.2 4.5-1.2 1.6 0 3.3.4 4.5 1.2" fill="none" stroke="#fef9c3" stroke-opacity=".9" stroke-width="1" stroke-linecap="round"/></svg>',
     coinEmpty:
@@ -24,7 +24,7 @@
   };
 
   // =========================
-  // Utils
+  // Utils (texte / normalisation)
   // =========================
   const Text = {
     rmAccents: (s = '') => s.normalize('NFD').replace(/\p{Diacritic}/gu, ''),
@@ -36,7 +36,7 @@
   // VIEWS API (Supabase - Edge Function)
   // =========================
   const ViewsAPI = {
-    // ⚠️ On garde ton URL telle quelle
+    // ⚠️ On respecte ton URL telle quelle (ne pas modifier ici)
     EDGE_URL: 'https://eiuhpfmgdziqhycgcgsy.supabase.co/functions/v1/views',
 
     async fetchTotals(keys = []) {
@@ -76,39 +76,42 @@
     cfg: {
       basePrefix: '/',
       sel: {
-        games: '#games-grid',
+        games:  '#games-grid',
         builds: '#builds-grid',
         guides: '#guides-grid',
-        tools: '#tools-grid',
+        tools:  '#tools-grid',
         search: '#search-input',
-        nores: '#no-results',
-        sentinel: '#infinite-sentinel',
+        nores:  '#no-results',
+        sentinel:'#infinite-sentinel',
       },
       endpoints: {
-        gamesIndex: 'content/games/index.json',
+        gamesIndex:  'content/games/index.json',
         buildsIndex: 'content/builds/index.json',
         guidesIndex: 'content/guides/index.json',
-        toolsIndex: 'content/tools/index.json',
+        toolsIndex:  'content/tools/index.json',
       },
       page: 'auto',
       pageSize: 24,
     },
 
     state: {
-      indexes: { games: null, builds: null, guides: null, tools: null },
+      indexes:   { games: null, builds: null, guides: null, tools: null },
       observers: { list: null, gameCols: null },
     },
 
     // ---------- Boot ----------
     init() {
+      // Base prefix (ex. /Tools/ sur GitHub Pages)
       const parts = location.pathname.split('/').filter(Boolean);
       this.cfg.basePrefix = parts.length > 0 ? `/${parts[0]}/` : '/';
 
+      // Absolutiser les endpoints
       const abs = (p) => (/^https?:\/\//i.test(p) ? p : this.cfg.basePrefix + p.replace(/^\//, ''));
       Object.keys(this.cfg.endpoints).forEach((k) => {
         this.cfg.endpoints[k] = abs(this.cfg.endpoints[k]);
       });
 
+      // Quelle page ? meta ou autodetect
       const hinted = document.querySelector('meta[name="cms:page"]')?.content?.trim();
       this.cfg.page = hinted || this.autodetectPage();
 
@@ -117,10 +120,10 @@
     },
 
     autodetectPage() {
-      if (document.querySelector(this.cfg.sel.games)) return 'games';
+      if (document.querySelector(this.cfg.sel.games))  return 'games';
       if (document.querySelector(this.cfg.sel.builds)) return 'builds';
       if (document.querySelector(this.cfg.sel.guides)) return 'guides';
-      if (document.querySelector(this.cfg.sel.tools)) return 'tools';
+      if (document.querySelector(this.cfg.sel.tools))  return 'tools';
       if (new URL(location.href).searchParams.get('type')) return 'detail';
       return 'home';
     },
@@ -170,7 +173,7 @@
       gameCard(g, href, views = 0) {
         return `${href}
           <div class="card-media">
-            ${g.cover ? CMS.tpl.img(CMS.normalizeAsset(g.cover), g.name) : '<div class="media-ph"></div>'}
+            ${g.cover ? CMS.tpl.img(g.cover, g.name) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
             <div style="position:absolute;top:10px;left:10px;">${CMS.tpl.badge(g.status || 'Actif')}</div>
           </div>
@@ -194,7 +197,7 @@
 
         return `${href}
           <div class="card-media">
-            ${b.cover ? CMS.tpl.img(CMS.normalizeAsset(b.cover), b.title) : '<div class="media-ph"></div>'}
+            ${b.cover ? CMS.tpl.img(b.cover, b.title) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
             ${b.tier ? `<div style="position:absolute;top:10px;left:10px;">${CMS.tpl.badge(b.tier, 'badge-pill badge-tier')}</div>` : ''}
             ${pub ? `<div style="position:absolute;bottom:10px;left:12px;" class="publisher">${pub}</div>` : ''}
@@ -215,7 +218,7 @@
         const pub = (x.gameDisplayName || x.gameName || '').toString().toUpperCase();
         return `${href}
           <div class="card-media">
-            ${x.cover ? CMS.tpl.img(CMS.normalizeAsset(x.cover), x.title) : '<div class="media-ph"></div>'}
+            ${x.cover ? CMS.tpl.img(x.cover, x.title) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
             ${pub ? `<div style="position:absolute;bottom:10px;left:12px;" class="publisher">${pub}</div>` : ''}
           </div>
@@ -234,7 +237,7 @@
         const pub = (t.gameDisplayName || t.gameName || '').toString().toUpperCase();
         return `${href}
           <div class="card-media">
-            ${t.cover ? CMS.tpl.img(CMS.normalizeAsset(t.cover), t.title) : '<div class="media-ph"></div>'}
+            ${t.cover ? CMS.tpl.img(t.cover, t.title) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
             ${t.kind ? `<div style="position:absolute;top:10px;left:10px;">${CMS.tpl.badge(t.kind)}</div>` : ''}
           </div>
@@ -251,7 +254,7 @@
 
       compactCard(item, href, rightSmall = '') {
         const thumb = item.cover
-          ? CMS.tpl.img(CMS.normalizeAsset(item.cover), item.title || item.name)
+          ? CMS.tpl.img(item.cover, item.title || item.name)
           : '<div class="media-ph" style="width:100%;height:100%"></div>';
         const title = item.title || item.name || '';
         const meta = item.gameDisplayName || item.gameName || item.kind || '';
@@ -300,26 +303,25 @@
     // ======================================
     async setupListPage(type) {
       const [items, games] = await Promise.all([this.loadIndex(type), this.loadIndex('games')]);
-
       this.setupFilterOptions(type, games);
 
       const state = { all: items.slice(), filtered: [], cursor: 0, pageSize: this.cfg.pageSize };
 
-      const root = document.querySelector(this.cfg.sel[type]);
-      const nores = document.querySelector(this.cfg.sel.nores);
-      const sentinel = document.querySelector(this.cfg.sel.sentinel);
-      const searchInput = document.querySelector(this.cfg.sel.search);
-      const obs = this.state.observers;
+      const root      = document.querySelector(this.cfg.sel[type]);
+      const nores     = document.querySelector(this.cfg.sel.nores);
+      const sentinel  = document.querySelector(this.cfg.sel.sentinel);
+      const searchInp = document.querySelector(this.cfg.sel.search);
+      const obs       = this.state.observers;
 
       const apply = () => {
-        const query = searchInput?.value || '';
+        const query   = searchInp?.value || '';
         const filters = this.readFilters(type);
 
         const res = this.filterItems(type, state.all, query, filters);
         state.filtered = res;
-        state.cursor = 0;
+        state.cursor   = 0;
         root.innerHTML = '';
-        nores.hidden = res.length > 0;
+        nores.hidden   = res.length > 0;
 
         this.renderNextBatch(type, state, root).then(() => {
           window.dispatchEvent(new CustomEvent('content:updated', { detail: { section: type } }));
@@ -328,8 +330,7 @@
 
       let t = null;
       const onSearch = () => { clearTimeout(t); t = setTimeout(apply, 200); };
-
-      if (searchInput) searchInput.addEventListener('input', onSearch);
+      if (searchInp) searchInp.addEventListener('input', onSearch);
       this.bindFilterEvents(type, apply);
 
       if (obs.list) { try { obs.list.disconnect(); } catch {} }
@@ -346,7 +347,9 @@
     setupFilterOptions(type, games) {
       const gameSel = document.getElementById('filter-game');
       if (gameSel && Array.isArray(games)) {
-        const opts = ['<option value="">Jeu: Tous</option>'].concat(games.map(g => `<option value="${g.slug}">${g.name}</option>`));
+        const opts = ['<option value="">Jeu: Tous</option>'].concat(
+          games.map(g => `<option value="${g.slug}">${g.name}</option>`)
+        );
         gameSel.innerHTML = opts.join('');
       }
     },
@@ -435,12 +438,12 @@
     async renderNextBatch(type, state, root) {
       if (state.cursor >= state.filtered.length) return;
 
-      const to = Math.min(state.cursor + state.pageSize, state.filtered.length);
+      const to    = Math.min(state.cursor + state.pageSize, state.filtered.length);
       const chunk = state.filtered.slice(state.cursor, to);
       state.cursor = to;
 
-      const singular = type.slice(0, -1);
-      const keys = chunk.map(it => `${singular}:${it.slug}`);
+      const singular = type.slice(0, -1); // games->game, builds->build, etc.
+      const keys     = chunk.map(it => `${singular}:${it.slug}`);
 
       let totals = new Map();
       try { totals = await ViewsAPI.fetchTotals(keys); }
@@ -448,9 +451,8 @@
 
       const html = chunk.map(it => {
         const href = this.buildHref(singular, it.slug);
-        const vv = totals.get(`${singular}:${it.slug}`) || 0;
+        const vv   = totals.get(`${singular}:${it.slug}`) || 0;
 
-        // Chaque template renvoie un <a ...> ... </a> complet
         if (type === 'games')  return this.tpl.gameCard(it, href, vv);
         if (type === 'builds') return this.tpl.buildCard(it, href, vv);
         if (type === 'guides') return this.tpl.guideCard(it, href, vv);
@@ -459,7 +461,6 @@
       }).join('');
 
       root.insertAdjacentHTML('beforeend', html);
-
       window.dispatchEvent(new CustomEvent('content:updated', { detail: { section: type, appended: chunk.length } }));
     },
 
@@ -496,13 +497,13 @@
           publisher = (g?.name || gslug).toString();
         }
       }
-      const status = (type === 'game' ? (head.status || 'Actif') : (head.tier || head.status || ''));
-      const coverHtml = head.cover ? this.tpl.img(this.normalizeAsset(head.cover), title) : '<div class="media-ph"></div>';
+      const status   = (type === 'game' ? (head.status || 'Actif') : (head.tier || head.status || ''));
+      const coverTag = head.cover ? this.tpl.img(head.cover, title) : '<div class="media-ph"></div>';
 
       const hero = `
         <div class="hero" style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#0f1115">
           <div class="media" style="position:relative;aspect-ratio:16/7;overflow:hidden">
-            ${coverHtml}
+            ${coverTag}
             <div class="overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,21,.9),rgba(15,17,21,.2))"></div>
             <div class="meta" style="position:absolute;bottom:16px;left:16px;right:16px">
               ${status ? `<span class="badge-pill">${status}</span>` : ''}
@@ -516,21 +517,19 @@
       if (type === 'game') {
         const [builds, guides, tools] = await Promise.all([this.loadIndex('builds'), this.loadIndex('guides'), this.loadIndex('tools')]);
 
-        const byGame = (arr) => arr.filter(x => String(x.gameName||'').toLowerCase() === slug.toLowerCase());
+        const byGame = (arr) => arr.filter(x => String(x.gameName || '').toLowerCase() === slug.toLowerCase());
 
-        const buildsF = byGame(builds).slice().sort((a,b)=>{
-          const aa = String(a.updatedAt||''); const bb = String(b.updatedAt||'');
-          return aa<bb?1:aa>bb?-1: (a.title||'').localeCompare(b.title||'', 'fr', {sensitivity:'base'});
+        const buildsF = byGame(builds).slice().sort((a, b) => {
+          const aa = String(a.updatedAt || ''); const bb = String(b.updatedAt || '');
+          return aa < bb ? 1 : aa > bb ? -1 : (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' });
         });
-        const guidesF = byGame(guides).slice().sort((a,b)=>{
-          const aa = String(a.date||''); const bb = String(b.date||'');
-          return aa<bb?1:aa>bb?-1: (a.title||'').localeCompare(b.title||'', 'fr', {sensitivity:'base'});
+        const guidesF = byGame(guides).slice().sort((a, b) => {
+          const aa = String(a.date || ''); const bb = String(b.date || '');
+          return aa < bb ? 1 : aa > bb ? -1 : (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' });
         });
-        const toolsF = byGame(tools).slice().sort((a,b)=>{
-          return (a.title||'').localeCompare(b.title||'', 'fr', {sensitivity:'base'});
-        });
+        const toolsF = byGame(tools).slice().sort((a, b) => (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' }));
 
-        const keep = (it) => String(it.gameStatus||'').toLowerCase() !== 'archive';
+        const keep = (it) => String(it.gameStatus || '').toLowerCase() !== 'archive';
         let showArchived = false;
 
         const columns = `
@@ -560,20 +559,24 @@
         root.innerHTML = hero + columns;
 
         const stateCols = { bAll: buildsF, gAll: guidesF, tAll: toolsF, bCur: 0, gCur: 0, tCur: 0, pageSize: this.cfg.pageSize };
-        const elB = ()=>document.getElementById('col-builds');
-        const elG = ()=>document.getElementById('col-guides');
-        const elT = ()=>document.getElementById('col-tools');
-        const emptyB = ()=>document.getElementById('empty-builds');
-        const emptyG = ()=>document.getElementById('empty-guides');
-        const emptyT = ()=>document.getElementById('empty-tools');
-        const spinner = ()=>document.getElementById('game-spinner');
+        const elB = () => document.getElementById('col-builds');
+        const elG = () => document.getElementById('col-guides');
+        const elT = () => document.getElementById('col-tools');
+        const emptyB = () => document.getElementById('empty-builds');
+        const emptyG = () => document.getElementById('empty-guides');
+        const emptyT = () => document.getElementById('empty-tools');
+        const spinner = () => document.getElementById('game-spinner');
 
         const applyArch = () => {
-          const filt = (arr) => showArchived ? arr : arr.filter(it => String(it.gameStatus||'').toLowerCase() !== 'archive');
-          stateCols.bAll = filt(buildsF); stateCols.gAll = filt(guidesF); stateCols.tAll = filt(toolsF);
+          const filt = (arr) => showArchived ? arr : arr.filter(keep);
+          stateCols.bAll = filt(buildsF);
+          stateCols.gAll = filt(guidesF);
+          stateCols.tAll = filt(toolsF);
           stateCols.bCur = stateCols.gCur = stateCols.tCur = 0;
           elB().innerHTML = ''; elG().innerHTML = ''; elT().innerHTML = '';
-          emptyB().hidden = stateCols.bAll.length>0; emptyG().hidden = stateCols.gAll.length>0; emptyT().hidden = stateCols.tAll.length>0;
+          emptyB().hidden = stateCols.bAll.length > 0;
+          emptyG().hidden = stateCols.gAll.length > 0;
+          emptyT().hidden = stateCols.tAll.length > 0;
           renderMore();
         };
 
@@ -586,30 +589,36 @@
           const [tChunk, tTo] = take(stateCols.tAll, stateCols.tCur);
           stateCols.bCur = bTo; stateCols.gCur = gTo; stateCols.tCur = tTo;
 
-          const keys = [].concat(bChunk.map(i=>`build:${i.slug}`)).concat(gChunk.map(i=>`guide:${i.slug}`)).concat(tChunk.map(i=>`tool:${i.slug}`));
-          let totals = new Map(); try { totals = await ViewsAPI.fetchTotals(keys); } catch { totals = new Map(); keys.forEach(k=>totals.set(k,0)); }
+          const keys = []
+            .concat(bChunk.map(i => `build:${i.slug}`))
+            .concat(gChunk.map(i => `guide:${i.slug}`))
+            .concat(tChunk.map(i => `tool:${i.slug}`));
 
-          const bHTML = bChunk.map(i => this.tpl.compactCard(i, this.buildHref('build', i.slug), (totals.get(`build:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
-          const gHTML = gChunk.map(i => this.tpl.compactCard(i, this.buildHref('guide', i.slug), (totals.get(`guide:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
-          const tHTML = tChunk.map(i => this.tpl.compactCard(i, this.buildHref('tool',  i.slug), (totals.get(`tool:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
+          let totals = new Map();
+          try { totals = await ViewsAPI.fetchTotals(keys); }
+          catch { totals = new Map(); keys.forEach(k => totals.set(k, 0)); }
+
+          const bHTML = bChunk.map(i => this.tpl.compactCard(i, this.buildHref('build', i.slug),  (totals.get(`build:${i.slug}`) || 0).toLocaleString('fr-FR'))).join('');
+          const gHTML = gChunk.map(i => this.tpl.compactCard(i, this.buildHref('guide', i.slug), (totals.get(`guide:${i.slug}`) || 0).toLocaleString('fr-FR'))).join('');
+          const tHTML = tChunk.map(i => this.tpl.compactCard(i, this.buildHref('tool',  i.slug),  (totals.get(`tool:${i.slug}`)  || 0).toLocaleString('fr-FR'))).join('');
 
           elB().insertAdjacentHTML('beforeend', bHTML);
           elG().insertAdjacentHTML('beforeend', gHTML);
           elT().insertAdjacentHTML('beforeend', tHTML);
 
           spinner().hidden = true;
-          window.dispatchEvent(new CustomEvent('content:updated', { detail: { section:'game-columns', appended: bChunk.length+gChunk.length+tChunk.length } }));
+          window.dispatchEvent(new CustomEvent('content:updated', { detail: { section: 'game-columns', appended: bChunk.length + gChunk.length + tChunk.length } }));
         };
 
         const toggle = document.getElementById('toggle-archived');
-        if (toggle) toggle.addEventListener('change', ()=>{ showArchived = !!toggle.checked; applyArch(); });
+        if (toggle) toggle.addEventListener('change', () => { showArchived = !!toggle.checked; applyArch(); });
 
         const sentinel = document.getElementById('infinite-sentinel');
-        if (this.state.observers.gameCols) { try { this.state.observers.gameCols.disconnect(); } catch{} }
+        if (this.state.observers.gameCols) { try { this.state.observers.gameCols.disconnect(); } catch {} }
         if (sentinel) {
           this.state.observers.gameCols = new IntersectionObserver(async (entries) => {
             for (const ent of entries) if (ent.isIntersecting) await renderMore();
-          }, { root:null, rootMargin:'800px 0px', threshold:0 });
+          }, { root: null, rootMargin: '800px 0px', threshold: 0 });
           this.state.observers.gameCols.observe(sentinel);
         }
 
@@ -617,8 +626,8 @@
         return;
       }
 
-      // détails build/guide/tool
-      const gslug = this.pathToSlug((head.gameName||'').toString());
+      // détail build/guide/tool : lien vers le jeu
+      const gslug = this.pathToSlug((head.gameName || '').toString());
       let gameLinkHtml = '';
       if (gslug) {
         const games = await this.loadIndex('games');
@@ -628,11 +637,11 @@
       }
 
       let body = '';
-      if (type==='build') {
+      if (type === 'build') {
         const stars = Math.max(1, Math.min(5, Number.isFinite(+head.difficultyStars) && +head.difficultyStars > 0 ? +head.difficultyStars : this.starsFromDifficulty(head.difficulty)));
         const coins = Math.max(0, Math.min(5, Number.isFinite(+head.cost) ? +head.cost : 0));
-        const starRow = Array.from({length:5},(_,i)=> i<stars?ICONS.starFilled:ICONS.starEmpty).join('');
-        const coinRow = Array.from({length:5},(_,i)=> i<coins?ICONS.coinFilled:ICONS.coinEmpty).join('');
+        const starRow = Array.from({ length: 5 }, (_, i) => (i < stars ? ICONS.starFilled : ICONS.starEmpty)).join('');
+        const coinRow = Array.from({ length: 5 }, (_, i) => (i < coins ? ICONS.coinFilled : ICONS.coinEmpty)).join('');
         body += `
           <section class="section"><h3>Difficulté</h3><div class="stars">${starRow}</div></section>
           <section class="section"><h3>Coût</h3><div class="coins">${coinRow}</div></section>
@@ -645,16 +654,13 @@
 
     // ---------- bind filters ----------
     bindFilterEvents(type, apply) {
-      const ids = ['filter-game','filter-tier','filter-version','filter-kind','filter-status','toggle-archived'];
+      const ids = ['filter-game', 'filter-tier', 'filter-version', 'filter-kind', 'filter-status', 'toggle-archived'];
       ids.forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', apply); });
     },
   };
 
+  // expose & boot
   window.CMS_LOADER = CMS;
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => CMS.init());
-  } else {
-    CMS.init();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => CMS.init());
+  else CMS.init();
 })();
