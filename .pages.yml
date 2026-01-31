@@ -49,10 +49,10 @@ content:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
             results: "items"        # tableau d’items
-            value: "slug"           # on stocke le slug du jeu
-            label: "{{name}}"       # on affiche le nom du jeu
-            default: true
-            minlength: 0
+          value: "slug"           # on stocke le slug du jeu
+          label: "{{name}}"       # on affiche le nom du jeu
+          default: true
+          minlength: 0
 
       - name: tier
         label: "Tier"
@@ -100,11 +100,11 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
-            results: "items"
-            value: "slug"
-            label: "{{name}}"
-            default: true
-            minlength: 0
+            results: "items"        # tableau d’items
+          value: "slug"           # on stocke le slug du jeu
+          label: "{{name}}"       # on affiche le nom du jeu
+          default: true
+          minlength: 0
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
       - { name: cover,    label: "Cover (16:9)", type: image, required: false }
@@ -138,12 +138,13 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
-            results: "items"
-            value: "slug"
-            label: "{{name}}"
-            default: true
-            minlength: 0
+            results: "items"        # tableau d’items
+          value: "slug"           # on stocke le slug du jeu
+          label: "{{name}}"       # on affiche le nom du jeu
+          default: true
+          minlength: 0
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
