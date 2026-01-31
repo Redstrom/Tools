@@ -6,18 +6,21 @@ html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif}
 a{color:#22c55e;text-decoration:none}
 a:hover{text-decoration:underline}
-.container{max-width:1200px;margin:0 auto;padding:0 16px}
+.container{max-width:1536px;margin:0 auto;padding:0 16px} /* élargi à 1536px */
+
 header{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(11,12,13,.6);border-bottom:1px solid var(--border)}
 .hstack{display:flex;align-items:center;gap:16px}.spacer{flex:1}
 nav a{display:inline-flex;padding:10px 8px;border-radius:8px}
 nav a:hover{background:rgba(255,255,255,.04)}
+
 .section{padding:28px 0}.section h2{font-size:1.3rem;margin:0 0 10px}
 .bar{height:3px;width:48px;background:var(--primary);border-radius:999px}
+
 .grid{display:grid;gap:1.25rem}
 @media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
-/* cartes */
 .card--game{position:relative;border:1px solid var(--border);background:#0f1115;border-radius:12px;overflow:hidden;transition:border-color .25s,box-shadow .25s,transform .25s;box-shadow:0 6px 24px rgba(0,0,0,.28);display:block}
 .card--game:hover{border-color:#22c55e;box-shadow:0 10px 36px rgba(0,0,0,.35)}
 .card-media{position:relative;aspect-ratio:16/9;overflow:hidden}
@@ -42,7 +45,33 @@ h1{margin:0;font-size:2rem}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:#131720;color:var(--fg)}
 .btn:hover{border-color:#22c55e}
 
-/* tuiles catégories */
+/* tiles */
 .tile{display:block;border:1px solid var(--border);background:#0f1115;border-radius:12px;padding:18px;transition:all .25s}
 .tile:hover{border-color:#22c55e;transform:translateY(-2px)}
 .tile h3{margin:4px 0 0}
+
+/* --- Compact cards (for search & columns on Game detail) --- */
+.card--compact{display:flex;gap:10px;padding:10px;border:1px solid var(--border);background:#0f1115;border-radius:10px;align-items:center}
+.card--compact .thumb{width:72px;height:48px;flex:0 0 auto;border-radius:6px;overflow:hidden;background:#0f1115;border:1px solid var(--border)}
+.card--compact .thumb img{width:100%;height:100%;object-fit:cover}
+.card--compact .meta{display:flex;flex-direction:column;gap:3px;min-width:0}
+.card--compact .title{font-size:.98rem;font-weight:800;margin:0}
+.card--compact .small{font-size:.82rem;color:var(--muted)}
+
+/* --- Search bar & filters --- */
+.searchbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.searchbar input[type="search"]{flex:1;min-width:240px;background:#131720;color:var(--fg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;outline:none}
+.searchbar .switch{display:inline-flex;gap:8px;align-items:center;color:var(--muted)}
+.select{background:#131720;color:var(--fg);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+
+/* --- Infinite scroll sentinel / spinner --- */
+.infinite-sentinel{height:1px}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* --- 3 columns layout for Game detail --- */
+.columns-3{display:grid;gap:16px}
+@media(min-width:900px){.columns-3{grid-template-columns:1fr 1fr 1fr}}
+.column h3{margin:0 0 8px}
+.column .list{display:flex;flex-direction:column;gap:10px}
+.empty-hint{color:var(--muted);font-size:.92rem}
