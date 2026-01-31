@@ -15,7 +15,7 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{{name | slug}}.json"           # slug auto depuis "name"
+    filename: "{{name | slug}}.json"
     fields:
       - { name: name,  label: "Nom",  type: string }
       - { name: short, label: "Description courte", type: text,   required: false }
@@ -24,7 +24,7 @@ content:
         label: "Statut"
         type: select
         options: { values: [ { label: "Actif", value: "actif" }, { label: "Archivé", value: "archive" } ] }
-        required: false
+        required: true
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
 
   # =========================
@@ -48,11 +48,9 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
-            results: "items"        # tableau d’items
-          value: "slug"           # on stocke le slug du jeu
-          label: "{{name}}"       # on affiche le nom du jeu
-          default: true
-          minlength: 0
+            results: "items"
+          value: "slug"
+          label: "{{name}}"
 
       - name: tier
         label: "Tier"
@@ -74,11 +72,11 @@ content:
             - { label: "Difficile", value: "difficile" }
             - { label: "Expert",    value: "expert" }
         required: false
-      - { name: difficultyStars, label: "Difficulté (étoiles 1..5)", type: number, min: 1, max: 5, step: 1, required: false }
-      - { name: cost,            label: "Coût (pièces 0..5)",        type: number, min: 0, max: 5, step: 1, required: false }
+      - { name: difficultyStars, label: "Difficulté (étoiles 1..5)", type: number, min: 1, max: 5, step: 1, required: true }
+      - { name: cost,            label: "Coût (pièces 0..5)",        type: number, min: 1, max: 5, step: 1, required: true }
 
       - { name: cover,     label: "Cover (16:9)", type: image, required: false }
-      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }  # auto-ajustée par workflow
+      - { name: updatedAt, label: "Mise à jour",  type: string, required: false }
       - { name: body,      label: "Corps (HTML/Markdown)", type: text, required: false }
 
   # =========================
@@ -100,11 +98,9 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
-            results: "items"        # tableau d’items
-          value: "slug"           # on stocke le slug du jeu
-          label: "{{name}}"       # on affiche le nom du jeu
-          default: true
-          minlength: 0
+            results: "items"
+          value: "slug"
+          label: "{{name}}"
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
       - { name: cover,    label: "Cover (16:9)", type: image, required: false }
@@ -128,7 +124,7 @@ content:
         label: "Type"
         type: select
         options: { values: ["Overlay","Plugin","Site","Autre"] }
-        required: false
+        required: true
       - { name: url,   label: "URL",   type: string, required: false }
       - { name: notes, label: "Notes", type: text,   required: false }
 
@@ -138,13 +134,12 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
-            results: "items"        # tableau d’items
-          value: "slug"           # on stocke le slug du jeu
-          label: "{{name}}"       # on affiche le nom du jeu
-          default: true
-          minlength: 0
+            results: "items"
+          value: "slug"
+          label: "{{name}}"
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
