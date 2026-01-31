@@ -49,8 +49,7 @@ content:
         options:
           fetch:
             url: "https://redstrom.github.io/Tools/content/games/index.json"
-            params: {}
-          results: "items"
+            results: "items"
           value: "slug"
           label: "name"
           image: "cover"
@@ -149,6 +148,7 @@ content:
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
 
