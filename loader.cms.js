@@ -34,24 +34,43 @@
     return `${y}-${m}-${dd}`;
   }
 
-  // =========================
-  // VIEWS API (Supabase hooks - stubs)
-  // =========================
-  // → Étape Supabase : nous brancherons ces méthodes sur l’Edge Function
-  const ViewsAPI = {
-    // keys: ['build:aatrox-top-...', 'tool:game-overlay-example', ...]
-    async fetchTotals(keys=[]) {
-      // TODO Supabase: remplacer par un appel réel (GET agrégé par type:slug)
-      // On renvoie 0 par défaut pour ne pas bloquer l’UI
+// =========================
+// VIEWS API (Supabase - Edge Function)
+// =========================
+const ViewsAPI = {
+  EDGE_URL: 'https://eiuhpfmgdziqhycgcgsy.supabase.co/functions/v1/views',
+
+  async fetchTotals(keys = []) {
+    try {
+      if (!keys.length) return new Map();
+      const u = new URL(this.EDGE_URL);
+      u.searchParams.set('keys', keys.join(','));
+      const r = await fetch(u.toString(), { method:'GET', mode:'cors' });
+      if (!r.ok) throw new Error(String(r.status));
+      const j = await r.json();
       const out = new Map();
-      keys.forEach(k => out.set(k, 0));
+      for (const k of keys) out.set(k, Number(j?.totals?.[k] || 0));
       return out;
-    },
-    async increment(type, slug) {
-      // TODO Supabase: POST edge function (1 vue / personne / jour)
-      return true;
+    } catch {
+      const out = new Map(); keys.forEach(k => out.set(k, 0)); return out;
     }
-  };
+  },
+
+  async increment(type, slug) {
+    try {
+      const r = await fetch(this.EDGE_URL, {
+        method:'POST',
+        mode:'cors',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ type, slug })
+      });
+      if (!r.ok) throw new Error(String(r.status));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+};
 
   // =========================
   // CMS LOADER
