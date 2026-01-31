@@ -1,7 +1,0 @@
-{
-  "title": "Overlay Statistiques eSport",
-  "kind": "Overlay",
-  "url": "https://example.com/overlay",
-  "notes": "Overlay léger pour affichage des stats en partie",
-  "body": "<p>Supporte plusieurs jeux, personnalisation des HUD.</p>"
-}
