@@ -42,16 +42,16 @@ content:
       - { name: title, label: "Titre", type: string }
 
       # Jeu en liste déroulante (chargée depuis l’index public du site)
-- name: gameName
-  label: "Jeu"
-  type: select
-  required: true
-  options:
-    fetch:
-      url: "https://redstrom.github.io/Tools/content/games/index.json"
-      results: "items"
-    value: "slug"
-    label: "{{name}}"
+      - name: gameName
+        label: "Jeu"
+        type: select
+        required: true
+        options:
+          fetch:
+            url: "https://redstrom.github.io/Tools/content/games/index.json"
+            results: "items"
+          value: "slug"
+          label: "{{name}}"
 
       - name: tier
         label: "Tier"
@@ -93,16 +93,16 @@ content:
     filename: "{{title | slug}}.json"
     fields:
       - { name: title, label: "Titre", type: string }
-- name: gameName
-  label: "Jeu"
-  type: select
-  required: true
-  options:
-    fetch:
-      url: "https://redstrom.github.io/Tools/content/games/index.json"
-      results: "items"
-    value: "slug"
-    label: "{{name}}"
+      - name: gameName
+        label: "Jeu"
+        type: select
+        required: true
+        options:
+          fetch:
+            url: "https://redstrom.github.io/Tools/content/games/index.json"
+            results: "items"
+          value: "slug"
+          label: "{{name}}"
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
       - { name: cover,    label: "Cover (16:9)", type: image, required: false }
@@ -130,19 +130,20 @@ content:
       - { name: url,   label: "URL",   type: string, required: false }
       - { name: notes, label: "Notes", type: text,   required: false }
 
-- name: gameName
-  label: "Jeu"
-  type: select
-  required: true
-  options:
-    fetch:
-      url: "https://redstrom.github.io/Tools/content/games/index.json"
-      results: "items"
-    value: "slug"
-    label: "{{name}}"
+      - name: gameName
+        label: "Jeu"
+        type: select
+        required: true
+        options:
+          fetch:
+            url: "https://redstrom.github.io/Tools/content/games/index.json"
+            results: "items"
+          value: "slug"
+          label: "{{name}}"
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
 
