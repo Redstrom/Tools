@@ -47,7 +47,7 @@ content:
         type: select
         required: true
         options:
-          values :
+          values:
             fetch:
               url: "https://redstrom.github.io/Tools/content/games/index.json"
               params: {}
@@ -150,6 +150,7 @@ content:
 
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
+
 
 
 
