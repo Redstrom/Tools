@@ -15,7 +15,7 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{name}.json"
+    filename: {title}".json"
     fields:
       - { name: name,  label: "Nom",  type: string }
       - { name: short, label: "Description courte", type: text,   required: false }
@@ -37,7 +37,7 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{title}.json"
+    filename: {title}".json"
     fields:
       - { name: title, label: "Titre", type: string }
       - name: gameName
@@ -82,7 +82,7 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{title}.json"
+    filename: {title}".json"
     fields:
       - { name: title, label: "Titre", type: string }
       - name: gameName
@@ -110,7 +110,7 @@ content:
     create: true
     format: json
     extension: json
-    filename: "{title}.json"
+    filename: {title}".json"
     fields:
       - { name: title, label: "Titre", type: string }
       - name: kind
@@ -131,20 +131,3 @@ content:
           label: "{name}"
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps (HTML/Markdown)", type: text, required: false }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
