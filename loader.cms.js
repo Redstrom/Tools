@@ -450,15 +450,16 @@
       catch { totals = new Map(); keys.forEach(k => totals.set(k, 0)); }
 
       const html = chunk.map(it => {
-        const href = this.buildHref(singular, it.slug);
-        const vv   = totals.get(`${singular}:${it.slug}`) || 0;
-
-        if (type === 'games')  return this.tpl.gameCard(it, href, vv);
-        if (type === 'builds') return this.tpl.buildCard(it, href, vv);
-        if (type === 'guides') return this.tpl.guideCard(it, href, vv);
-        if (type === 'tools')  return this.tpl.toolCard(it, href, vv);
-        return '';
-      }).join('');
+      const url = this.buildHref(singular, it.slug);
+      const aOpen = `<a class="card--game" href="${url}">`;
+      const vv = totals.get(`${singular}:${it.slug}`) || 0;
+    
+      if (type === 'games')  return this.tpl.gameCard(it, aOpen, vv);
+      if (type === 'builds') return this.tpl.buildCard(it, aOpen, vv);
+      if (type === 'guides') return this.tpl.guideCard(it, aOpen, vv);
+      if (type === 'tools')  return this.tpl.toolCard(it, aOpen, vv);
+      return '';
+    }).join('');
 
       root.insertAdjacentHTML('beforeend', html);
       window.dispatchEvent(new CustomEvent('content:updated', { detail: { section: type, appended: chunk.length } }));
