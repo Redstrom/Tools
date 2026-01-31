@@ -495,14 +495,8 @@ getSearchBlob(it) {
 
 // 2) recherche (ET logique entre tokens)
 if (qTokens.length === 0) return true;
-
-// → Blob générique : on indexe TOUT ce qui existe sur l'item (présent & futur)
 const hay = CMS.getSearchBlob(it);
 return qTokens.every(tk => hay.includes(tk));
-
-        const hay = Text.norm(bag.filter(Boolean).join(' '));
-        return qTokens.every((tk) => hay.includes(tk));
-      };
 
       return list.filter(keep); // tri conservé depuis l’index
     },
