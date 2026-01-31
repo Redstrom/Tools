@@ -166,7 +166,7 @@
         const safeAlt = (alt || '').replace(/"/g, '"');
         if (!src) return '<div class="media-ph"></div>';
         const url = CMS.normalizeAsset(src);
-        return `${url}`;
+        return `<img src="${url}" alt="${safeAlt}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">`;
       },
 
       badge(t, cls = 'badge-pill') { return `<span class="${cls}">${t}</span>`; },
