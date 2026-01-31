@@ -2,7 +2,7 @@
   // =========================
   // CONFIG & VERSION
   // =========================
-  const VERSION = 'v11.2';
+  const VERSION = 'v11.4';
   const FILE = 'loader.cms.js';
   console.log(`[CMS] ${FILE} ${VERSION}`);
 
@@ -16,7 +16,7 @@
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" aria-hidden="true"><path d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
     starEmpty:
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="#fbbf24" stroke-width="1.5" d="m12 17.3-6.2 3.3 1.2-6.9-5-4.8 6.9-1 3.1-6.3 3.1 6.3 6.9 1-5 4.8 1.2 6.9z"/></svg>',
-    // Pièce avec relief/reflet (lisible sur fond sombre)
+    // Pièce avec relief/reflet
     coinFilled:
       '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#eab308"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#g1)"/><circle cx="12" cy="12" r="8" fill="none" stroke="#a16207" stroke-width="1.25"/><path d="M7.5 9.2c1.2-.8 2.9-1.2 4.5-1.2 1.6 0 3.3.4 4.5 1.2" fill="none" stroke="#fef9c3" stroke-opacity=".9" stroke-width="1" stroke-linecap="round"/></svg>',
     coinEmpty:
@@ -24,7 +24,7 @@
   };
 
   // =========================
-  // Utils (texte, URL, DOM)
+  // Utils
   // =========================
   const Text = {
     rmAccents: (s = '') => s.normalize('NFD').replace(/\p{Diacritic}/gu, ''),
@@ -32,20 +32,12 @@
     token: (q = '') => Text.norm(q).split(/\s+/).filter(Boolean),
   };
 
-  function todayLocalKey() {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${dd}`;
-  }
-
   // =========================
   // VIEWS API (Supabase - Edge Function)
   // =========================
   const ViewsAPI = {
-    // ⚠️ REMPLACE <PROJECT-REF> par l’identifiant de ton projet (ex: abcdxyz)
-    EDGE_URL: 'https://<PROJECT-REF>.functions.supabase.co/views',
+    // ⚠️ On garde ton URL telle quelle
+    EDGE_URL: 'https://eiuhpfmgdziqhycgcgsy.supabase.co/functions/v1/views',
 
     async fetchTotals(keys = []) {
       try {
@@ -99,7 +91,7 @@
         toolsIndex: 'content/tools/index.json',
       },
       page: 'auto',
-      pageSize: 24, // lot pour scroll infini
+      pageSize: 24,
     },
 
     state: {
@@ -107,7 +99,7 @@
       observers: { list: null, gameCols: null },
     },
 
-    // ------------- Boot -------------
+    // ---------- Boot ----------
     init() {
       const parts = location.pathname.split('/').filter(Boolean);
       this.cfg.basePrefix = parts.length > 0 ? `/${parts[0]}/` : '/';
@@ -118,7 +110,7 @@
       });
 
       const hinted = document.querySelector('meta[name="cms:page"]')?.content?.trim();
-      this.cfg.page = hinted || this.autodetectPage(); // ← IMPORTANT
+      this.cfg.page = hinted || this.autodetectPage();
 
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => this.run());
       else this.run();
@@ -133,7 +125,7 @@
       return 'home';
     },
 
-    // ------------- HTTP -------------
+    // ---------- HTTP ----------
     async fetchJSON(url) {
       try {
         const r = await fetch(url, { cache: 'no-store' });
@@ -164,19 +156,19 @@
       return m ? m[1] : (s || '');
     },
 
-    // ------------- Templates -------------
+    // ---------- Templates ----------
     tpl: {
       img(src, alt) {
         const safeAlt = (alt || '').replace(/"/g, '"');
         if (!src) return '<div class="media-ph"></div>';
         const url = CMS.normalizeAsset(src);
-        return `<img src="${url}" alt="${safeAlt}" loading="lazy" decoding="async" class="h-full w-full object-cover">`;
+        return `${url}`;
       },
 
       badge(t, cls = 'badge-pill') { return `<span class="${cls}">${t}</span>`; },
 
       gameCard(g, href, views = 0) {
-        return `<a href="${href}" class="card--game">
+        return `${href}
           <div class="card-media">
             ${g.cover ? CMS.tpl.img(CMS.normalizeAsset(g.cover), g.name) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -200,7 +192,7 @@
         const coinRow = Array.from({ length: 5 }, (_, i) => (i < coins ? ICONS.coinFilled : ICONS.coinEmpty)).join('');
         const pub = (b.gameDisplayName || b.gameName || '').toString().toUpperCase();
 
-        return `<a href="${href}" class="card--game">
+        return `${href}
           <div class="card-media">
             ${b.cover ? CMS.tpl.img(CMS.normalizeAsset(b.cover), b.title) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -221,7 +213,7 @@
 
       guideCard(x, href, views = 0) {
         const pub = (x.gameDisplayName || x.gameName || '').toString().toUpperCase();
-        return `<a href="${href}" class="card--game">
+        return `${href}
           <div class="card-media">
             ${x.cover ? CMS.tpl.img(CMS.normalizeAsset(x.cover), x.title) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -240,7 +232,7 @@
 
       toolCard(t, href, views = 0) {
         const pub = (t.gameDisplayName || t.gameName || '').toString().toUpperCase();
-        return `<a href="${href}" class="card--game">
+        return `${href}
           <div class="card-media">
             ${t.cover ? CMS.tpl.img(CMS.normalizeAsset(t.cover), t.title) : '<div class="media-ph"></div>'}
             <div class="media-grad"></div>
@@ -257,14 +249,13 @@
         </a>`;
       },
 
-      // Compact (listes liées & colonnes Jeu)
       compactCard(item, href, rightSmall = '') {
         const thumb = item.cover
           ? CMS.tpl.img(CMS.normalizeAsset(item.cover), item.title || item.name)
           : '<div class="media-ph" style="width:100%;height:100%"></div>';
         const title = item.title || item.name || '';
         const meta = item.gameDisplayName || item.gameName || item.kind || '';
-        return `<a class="card--compact" href="${href}">
+        return `${href}
           <div class="thumb">${thumb}</div>
           <div class="meta">
             <div class="title">${title}</div>
@@ -275,7 +266,7 @@
       },
     },
 
-    // ------------- Helpers -------------
+    // ---------- Helpers ----------
     starsFromDifficulty(diff) {
       if (!diff) return 3;
       const d = String(diff).toLowerCase();
@@ -291,7 +282,7 @@
       return `detail.html?type=${encodeURIComponent(type)}&slug=${encodeURIComponent(slug)}`;
     },
 
-    // ------------- RUN -------------
+    // ---------- RUN ----------
     async run() {
       switch (this.cfg.page) {
         case 'games':  await this.setupListPage('games');  break;
@@ -312,12 +303,7 @@
 
       this.setupFilterOptions(type, games);
 
-      const state = {
-        all: items.slice(),
-        filtered: [],
-        cursor: 0,
-        pageSize: this.cfg.pageSize,
-      };
+      const state = { all: items.slice(), filtered: [], cursor: 0, pageSize: this.cfg.pageSize };
 
       const root = document.querySelector(this.cfg.sel[type]);
       const nores = document.querySelector(this.cfg.sel.nores);
@@ -386,7 +372,7 @@
       return o;
     },
 
-    // ---- Recherche générique : blob (toutes les props) ----
+    // ---- Recherche générique (blob) ----
     flattenForSearch(it) {
       const out = [];
       const seen = new Set();
@@ -399,7 +385,7 @@
           if (seen.has(v)) return;
           seen.add(v);
           for (const [k, val] of Object.entries(v)) {
-            if (k.startsWith('_') || k === '__blob') continue; // ignore champs techniques
+            if (k.startsWith('_') || k === '__blob') continue;
             walk(val);
           }
         }
@@ -409,7 +395,7 @@
     },
 
     getSearchBlob(it) {
-      if (it.__blob) return it.__blob; // déjà calculé
+      if (it.__blob) return it.__blob;
       const blob = Text.norm(this.flattenForSearch(it));
       Object.defineProperty(it, '__blob', { value: blob, enumerable: false });
       return blob;
@@ -439,11 +425,11 @@
         }
 
         if (qTokens.length === 0) return true;
-        const hay = this.getSearchBlob(it);   // ← blob générique (toutes les props)
+        const hay = this.getSearchBlob(it);
         return qTokens.every(tk => hay.includes(tk));
       };
 
-      return list.filter(keep); // conserve le tri de l'index
+      return list.filter(keep);
     },
 
     async renderNextBatch(type, state, root) {
@@ -453,7 +439,7 @@
       const chunk = state.filtered.slice(state.cursor, to);
       state.cursor = to;
 
-      const singular = type.slice(0, -1); // games->game, builds->build, ...
+      const singular = type.slice(0, -1);
       const keys = chunk.map(it => `${singular}:${it.slug}`);
 
       let totals = new Map();
@@ -463,12 +449,15 @@
       const html = chunk.map(it => {
         const href = this.buildHref(singular, it.slug);
         const vv = totals.get(`${singular}:${it.slug}`) || 0;
+
+        // Chaque template renvoie un <a ...> ... </a> complet
         if (type === 'games')  return this.tpl.gameCard(it, href, vv);
         if (type === 'builds') return this.tpl.buildCard(it, href, vv);
         if (type === 'guides') return this.tpl.guideCard(it, href, vv);
         if (type === 'tools')  return this.tpl.toolCard(it, href, vv);
         return '';
       }).join('');
+
       root.insertAdjacentHTML('beforeend', html);
 
       window.dispatchEvent(new CustomEvent('content:updated', { detail: { section: type, appended: chunk.length } }));
@@ -570,12 +559,7 @@
         `;
         root.innerHTML = hero + columns;
 
-        const stateCols = {
-          bAll: buildsF, gAll: guidesF, tAll: toolsF,
-          bCur: 0, gCur: 0, tCur: 0,
-          pageSize: this.cfg.pageSize,
-        };
-
+        const stateCols = { bAll: buildsF, gAll: guidesF, tAll: toolsF, bCur: 0, gCur: 0, tCur: 0, pageSize: this.cfg.pageSize };
         const elB = ()=>document.getElementById('col-builds');
         const elG = ()=>document.getElementById('col-guides');
         const elT = ()=>document.getElementById('col-tools');
@@ -585,42 +569,29 @@
         const spinner = ()=>document.getElementById('game-spinner');
 
         const applyArch = () => {
-          const filt = (arr) => showArchived ? arr : arr.filter(keep);
-          stateCols.bAll = filt(buildsF);
-          stateCols.gAll = filt(guidesF);
-          stateCols.tAll = filt(toolsF);
+          const filt = (arr) => showArchived ? arr : arr.filter(it => String(it.gameStatus||'').toLowerCase() !== 'archive');
+          stateCols.bAll = filt(buildsF); stateCols.gAll = filt(guidesF); stateCols.tAll = filt(toolsF);
           stateCols.bCur = stateCols.gCur = stateCols.tCur = 0;
           elB().innerHTML = ''; elG().innerHTML = ''; elT().innerHTML = '';
-          emptyB().hidden = stateCols.bAll.length>0;
-          emptyG().hidden = stateCols.gAll.length>0;
-          emptyT().hidden = stateCols.tAll.length>0;
+          emptyB().hidden = stateCols.bAll.length>0; emptyG().hidden = stateCols.gAll.length>0; emptyT().hidden = stateCols.tAll.length>0;
           renderMore();
         };
 
         const renderMore = async () => {
           spinner().hidden = false;
 
-          const take = (arr, cur) => {
-            const to = Math.min(cur + stateCols.pageSize, arr.length);
-            const chunk = arr.slice(cur, to);
-            return [chunk, to];
-          };
-
+          const take = (arr, cur) => { const to = Math.min(cur + stateCols.pageSize, arr.length); return [arr.slice(cur, to), to]; };
           const [bChunk, bTo] = take(stateCols.bAll, stateCols.bCur);
           const [gChunk, gTo] = take(stateCols.gAll, stateCols.gCur);
           const [tChunk, tTo] = take(stateCols.tAll, stateCols.tCur);
           stateCols.bCur = bTo; stateCols.gCur = gTo; stateCols.tCur = tTo;
 
-          const keys = []
-            .concat(bChunk.map(i=>`build:${i.slug}`))
-            .concat(gChunk.map(i=>`guide:${i.slug}`))
-            .concat(tChunk.map(i=>`tool:${i.slug}`));
-          let totals = new Map();
-          try { totals = await ViewsAPI.fetchTotals(keys); } catch { totals = new Map(); keys.forEach(k=>totals.set(k,0)); }
+          const keys = [].concat(bChunk.map(i=>`build:${i.slug}`)).concat(gChunk.map(i=>`guide:${i.slug}`)).concat(tChunk.map(i=>`tool:${i.slug}`));
+          let totals = new Map(); try { totals = await ViewsAPI.fetchTotals(keys); } catch { totals = new Map(); keys.forEach(k=>totals.set(k,0)); }
 
           const bHTML = bChunk.map(i => this.tpl.compactCard(i, this.buildHref('build', i.slug), (totals.get(`build:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
           const gHTML = gChunk.map(i => this.tpl.compactCard(i, this.buildHref('guide', i.slug), (totals.get(`guide:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
-          const tHTML = tChunk.map(i => this.tpl.compactCard(i, this.buildHref('tool',  i.slug), (totals.get(`tool:${i.slug}`) ||0).toLocaleString('fr-FR'))).join('');
+          const tHTML = tChunk.map(i => this.tpl.compactCard(i, this.buildHref('tool',  i.slug), (totals.get(`tool:${i.slug}`)||0).toLocaleString('fr-FR'))).join('');
 
           elB().insertAdjacentHTML('beforeend', bHTML);
           elG().insertAdjacentHTML('beforeend', gHTML);
@@ -646,14 +617,14 @@
         return;
       }
 
-      // Détail build/guide/tool : lien vers le jeu + sections spécifiques
+      // détails build/guide/tool
       const gslug = this.pathToSlug((head.gameName||'').toString());
       let gameLinkHtml = '';
       if (gslug) {
         const games = await this.loadIndex('games');
         const g = games.find(x => String(x.slug).toLowerCase() === gslug.toLowerCase());
         const gName = g?.name || gslug.toUpperCase();
-        gameLinkHtml = `<p style="margin:12px 0 0"><a class="btn" href="${this.buildHref('game', gslug)}">Voir la fiche ${gName}</a></p>`;
+        gameLinkHtml = `<p style="margin:12px 0 0">${this.buildHref(Voir la fiche ${gName}</a></p>`;
       }
 
       let body = '';
@@ -672,22 +643,15 @@
       root.innerHTML = hero + gameLinkHtml + body;
     },
 
-    // ======================================
-    // ======== LIST FILTER WIRING ==========
-    // ======================================
+    // ---------- bind filters ----------
     bindFilterEvents(type, apply) {
       const ids = ['filter-game','filter-tier','filter-version','filter-kind','filter-status','toggle-archived'];
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('change', apply);
-      });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', apply); });
     },
   };
 
-  // expose
   window.CMS_LOADER = CMS;
 
-  // auto-init
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => CMS.init());
   } else {
