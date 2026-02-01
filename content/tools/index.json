@@ -67,6 +67,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "poe-live-search-manager",
+      "title": "PoE Live Search Manager",
+      "kind": "Site",
+      "url": "https://github.com/5k-mirrors/poe-live-search-manager/releases/",
+      "notes": "Une pépite qui vous permet via une application de gérer toute une liste de recherche actualisée (live search) dans la boutique et vous crée des notifications windows quand il détecte un prix souhaité.",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "poe2-scout",
       "title": "Poe2 Scout",
       "kind": "Site",
