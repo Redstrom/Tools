@@ -12,6 +12,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "mon-loot-filter",
+      "title": "Mon Loot Filter",
+      "kind": "Plugin",
+      "url": "https://www.pathofexile.com/account/view-profile/R3D65-4443/item-filters",
+      "notes": "Loot filter dynamique (évolue avec les prix du marché) gratuit",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "path-of-building-2",
       "title": "Path Of Building 2",
       "kind": "Site",
