@@ -54,6 +54,17 @@
       "gameName": "path-of-exile-II",
       "gameDisplayName": "Path Of Exile II",
       "gameStatus": "actif"
+    },
+    {
+      "slug": "poedb",
+      "title": "PoeDB",
+      "kind": "Site",
+      "url": "https://poedb.tw",
+      "notes": "Toutes les données dont vous aurez besoin (y compris les développeurs !)",
+      "cover": "",
+      "gameName": "path-of-exile-I",
+      "gameDisplayName": "Path Of Exile I",
+      "gameStatus": "actif"
     }
   ]
 }
