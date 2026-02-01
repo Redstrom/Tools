@@ -2,5 +2,6 @@
   "title": "Craft Of Exile 2",
   "kind": "Site",
   "url": "https://www.craftofexile.com/?game=poe2",
-  "notes": "Simulateur de craft, vous permet avant de faire des bêtises de vous initier au craft !"
+  "notes": "Simulateur de craft, vous permet avant de faire des bêtises de vous initier au craft !",
+  "gameName": "content/games/path-of-exile-II.json"
 }
