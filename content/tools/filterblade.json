@@ -1,0 +1,7 @@
+{
+  "title": "FilterBlade",
+  "kind": "Plugin",
+  "url": "https://www.filterblade.xyz/?game=Poe2",
+  "notes": "Le classique de la gestion de loot filter",
+  "gameName": "content/games/path-of-exile-II.json"
+}
