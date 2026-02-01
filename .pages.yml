@@ -14,18 +14,20 @@ content:
     path: "content/games"
     create: true
     format: json
-    extension: json
     view:
-        primary: name
+      primary: name
     filename: "{primary}.json"
     fields:
       - { name: name,  label: "Nom",  type: string }
-      - { name: short, label: "Description courte", type: text,   required: false }
+      - { name: short, label: "Description courte", type: text, required: false }
       - { name: publisher, label: "Éditeur / Studio", type: string, required: false }
       - name: status
         label: "Statut"
         type: select
-        options: { values: [ { label: "Actif", value: "actif" }, { label: "Archivé", value: "archive" } ] }
+        options:
+          values:
+            - { label: "Actif", value: "actif" }
+            - { label: "Archivé", value: "archive" }
         required: true
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
 
@@ -38,9 +40,8 @@ content:
     path: "content/builds"
     create: true
     format: json
-    extension: json
     view:
-        primary: name
+      primary: title
     filename: "{primary}.json"
     fields:
       - { name: title, label: "Titre", type: string }
@@ -59,7 +60,7 @@ content:
         options: { values: ["S","A","B","C"] }
         required: false
       - { name: version, label: "Version", type: string, required: false }
-      - { name: summary, label: "Résumé",  type: rich-text,   required: false }
+      - { name: summary, label: "Résumé", type: rich-text, required: false }
       - name: difficulty
         label: "Difficulté"
         type: select
@@ -85,9 +86,8 @@ content:
     path: "content/guides"
     create: true
     format: json
-    extension: json
     view:
-        primary: name
+      primary: title
     filename: "{primary}.json"
     fields:
       - { name: title, label: "Titre", type: string }
@@ -115,9 +115,8 @@ content:
     path: "content/tools"
     create: true
     format: json
-    extension: json
     view:
-        primary: name
+      primary: title
     filename: "{primary}.json"
     fields:
       - { name: title, label: "Titre", type: string }
@@ -127,7 +126,7 @@ content:
         options: { values: ["Overlay","Plugin","Site","Autre"] }
         required: true
       - { name: url,   label: "URL",   type: string, required: false }
-      - { name: notes, label: "Notes", type: rich-text,   required: false }
+      - { name: notes, label: "Notes", type: rich-text, required: false }
       - name: gameName
         label: "Jeu"
         type: reference
@@ -139,6 +138,3 @@ content:
           label: "{name}"
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps", type: rich-text, required: false }
-
-
-
