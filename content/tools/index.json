@@ -1,3 +1,15 @@
 {
-  "items": []
+  "items": [
+    {
+      "slug": "path-of-building-2",
+      "title": "Path Of Building 2",
+      "kind": "Site",
+      "url": "https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/releases",
+      "notes": "Permet de theorycraft sur nos personnages avant de se ruiner pour rien en boutique !\n\nCalculs de DPS, meilleur chemin pour les passifs ...",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    }
+  ]
 }
