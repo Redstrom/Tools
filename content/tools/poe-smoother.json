@@ -1,0 +1,7 @@
+{
+  "title": "Poe Smoother",
+  "kind": "Site",
+  "url": "https://github.com/Gineticus/PoeSmoother/releases",
+  "notes": "(Bannable car modifie les fichiers du jeu)\n\nExcellent Patcher qui permet de retirer des effets visuels du jeu, mais permet notamment de mettre en couleurs les mods des map dangereux par exemple ou retirer le brouillard (map & atlas)",
+  "gameName": "content/games/path-of-exile-II.json"
+}
