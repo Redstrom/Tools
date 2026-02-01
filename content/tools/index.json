@@ -67,6 +67,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "poe2-scout",
+      "title": "Poe2 Scout",
+      "kind": "Site",
+      "url": "https://poe2scout.com/",
+      "notes": "La bourse, mais sur Poe2, pour faire simple.",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "poe2db",
       "title": "Poe2DB",
       "kind": "Site",
