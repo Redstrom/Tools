@@ -61,6 +61,14 @@ content:
         required: false
       - { name: version, label: "Version", type: string, required: false }
       - { name: summary, label: "Résumé", type: rich-text, required: false }
+      - name: status
+        label: "Statut"
+        type: select
+        options:
+          values:
+            - { label: "Actif", value: "actif" }
+            - { label: "Archivé", value: "archive" }
+        required: true
       - name: difficulty
         label: "Difficulté"
         type: select
@@ -100,6 +108,14 @@ content:
           multiple: false
           value: "{path}"
           label: "{name}"
+      - name: status
+        label: "Statut"
+        type: select
+        options:
+          values:
+            - { label: "Actif", value: "actif" }
+            - { label: "Archivé", value: "archive" }
+        required: true
       - { name: resource, label: "Ressource",  type: string, required: false }
       - { name: route,    label: "Route / Plan", type: text, required: false }
       - { name: cover,    label: "Cover (16:9)", type: image, required: false }
@@ -136,5 +152,14 @@ content:
           multiple: false
           value: "{path}"
           label: "{name}"
+      - name: status
+        label: "Statut"
+        type: select
+        options:
+          values:
+            - { label: "Actif", value: "actif" }
+            - { label: "Archivé", value: "archive" }
+        required: true
       - { name: cover, label: "Cover (16:9)", type: image, required: false }
       - { name: body,  label: "Corps", type: rich-text, required: false }
+
