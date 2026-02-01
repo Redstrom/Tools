@@ -43,6 +43,17 @@
       "gameName": "path-of-exile-II",
       "gameDisplayName": "Path Of Exile II",
       "gameStatus": "actif"
+    },
+    {
+      "slug": "poe2db",
+      "title": "Poe2DB",
+      "kind": "Site",
+      "url": "https://poe2db.tw/fr/Items",
+      "notes": "Toutes les données dont vous aurez besoin (y compris les développeurs !)",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
     }
   ]
 }
