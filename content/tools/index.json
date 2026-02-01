@@ -34,6 +34,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "extension-chrome-pour-le-trading",
+      "title": "Extension Chrome pour le Trading",
+      "kind": "Site",
+      "url": "https://chromewebstore.google.com/detail/diablo-trade-helper/aneddogdfflimkkcffpgadflkdodblkf?pli=1",
+      "notes": "Permet de copier coller des images & autres pour faciliter le trading",
+      "cover": "",
+      "gameName": "diablo-iv",
+      "gameDisplayName": "Diablo IV",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "filterblade",
       "title": "FilterBlade",
       "kind": "Plugin",
