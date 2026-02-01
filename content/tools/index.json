@@ -1,6 +1,17 @@
 {
   "items": [
     {
+      "slug": "divine-view",
+      "title": "Divine View",
+      "kind": "Site",
+      "url": "https://divineview.app/simulator",
+      "notes": "Mon simulateur préféré, je peux générer les items qui me semblent importants de tester lorsque je modifie mon loot filter",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "path-of-building-2",
       "title": "Path Of Building 2",
       "kind": "Site",
