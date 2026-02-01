@@ -78,6 +78,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "poe-smoother",
+      "title": "Poe Smoother",
+      "kind": "Site",
+      "url": "https://github.com/Gineticus/PoeSmoother/releases",
+      "notes": "(Bannable car modifie les fichiers du jeu)\n\nExcellent Patcher qui permet de retirer des effets visuels du jeu, mais permet notamment de mettre en couleurs les mods des map dangereux par exemple ou retirer le brouillard (map & atlas)",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "poe2-scout",
       "title": "Poe2 Scout",
       "kind": "Site",
