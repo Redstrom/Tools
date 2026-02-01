@@ -45,6 +45,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "interactive-map",
+      "title": "Interactive Map",
+      "kind": "Site",
+      "url": "https://maxroll.gg/d4/map-tool",
+      "notes": "Suivi des autels de lilith par exemple gratuitement",
+      "cover": "",
+      "gameName": "diablo-iv",
+      "gameDisplayName": "Diablo IV",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "mon-loot-filter",
       "title": "Mon Loot Filter",
       "kind": "Plugin",
