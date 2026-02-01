@@ -1,7 +1,6 @@
 {
   "title": "SpeedLeveling",
   "gameName": "content/games/last-epoch.json",
-  "resource": "https://www.lastepochtools.com/planner/A2Vlr59A & https://alteredorange.github.io/LastEpochLeveling/",
-  "route": "Le concept du build est simple, vous faites des **Dégâts de Feu (Fire Damage)**, beaucoup de dégâts … \nAvec un peu de chance lorsque vous enflammez les ennemis ça se propage et voila vous avez une AOE formidablement utile pour le leveling.\nÉnormément de **Vol de Vie (Leech)** basés sur les dégâts élémentaires (le feu) ainsi que tous les dégâts tout court.\nLe petit bonus est de martyriser vos ennemis avec plein d’Effets à l’**Impact (On Hit)** qui vont se cumuler comme le feu, le poison, le saignement (si vous en avez) … Et ça fait très mal.\nVous aurez en tant que protection beaucoup de **Bouclier (WARD)** générés par vos bottes et bouclier.",
-  "body": "La checklist en ligne est disponible ici : [https://alteredorange.github.io/LastEpochLeveling/](https://alteredorange.github.io/LastEpochLeveling/)"
+  "resource": "https://www.lastepochtools.com/planner/A2Vlr59A",
+  "body": "La checklist en ligne est disponible ici : [https://alteredorange.github.io/LastEpochLeveling/](https://alteredorange.github.io/LastEpochLeveling/)\n\nLe concept du build est simple, vous faites des **Dégâts de Feu (Fire Damage)**, beaucoup de dégâts …\n\nAvec un peu de chance lorsque vous enflammez les ennemis ça se propage et voila vous avez une AOE formidablement utile pour le leveling.\n\nÉnormément de **Vol de Vie (Leech)** basés sur les dégâts élémentaires (le feu) ainsi que tous les dégâts tout court.\n\nLe petit bonus est de martyriser vos ennemis avec plein d’Effets à l’\\*\\*Impact (On Hit)\\*\\* qui vont se cumuler comme le feu, le poison, le saignement (si vous en avez) … Et ça fait très mal.\n\nVous aurez en tant que protection beaucoup de **Bouclier (WARD)** générés par vos bottes et bouclier."
 }
