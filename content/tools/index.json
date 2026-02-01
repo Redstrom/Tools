@@ -1,6 +1,17 @@
 {
   "items": [
     {
+      "slug": "craft-of-exile-2",
+      "title": "Craft Of Exile 2",
+      "kind": "Site",
+      "url": "https://www.craftofexile.com/?game=poe2",
+      "notes": "Simulateur de craft, vous permet avant de faire des bêtises de vous initier au craft !",
+      "cover": "",
+      "gameName": "",
+      "gameDisplayName": "",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "divine-view",
       "title": "Divine View",
       "kind": "Site",
