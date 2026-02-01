@@ -1,7 +1,12 @@
 name: Build content indexes
+
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'content/**'
+      - 'scripts/build-content-index.mjs'
+      - '.pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -11,43 +16,27 @@ jobs:
   build-indexes:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 2 }
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      # MAJ updatedAt sur entrées modifiées
-      - name: Get modified content files
-        id: diff
-        run: |
-          echo "MODIFIED=$(git diff --name-only HEAD~1..HEAD | tr -d '\r')" >> $GITHUB_OUTPUT
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Update updatedAt for changed entries
-        env:
-          MODIFIED: ${{ steps.diff.outputs.MODIFIED }}
-        run: |
-          node scripts/touch-updatedAt.mjs || true
-
-      # construis les index (tu gardes ton script existant)
       - name: Build indexes
         run: node scripts/build-content-index.mjs
 
-      - name: Ensure _indexes dir & move
-        run: |
-          mkdir -p content/_indexes
-          mv -f content/games/index.json  content/_indexes/games.json  || true
-          mv -f content/builds/index.json content/_indexes/builds.json || true
-          mv -f content/guides/index.json content/_indexes/guides.json || true
-          mv -f content/tools/index.json  content/_indexes/tools.json  || true
-
-      - name: Commit & push
+      - name: Commit & push if changed
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add content/_indexes/*.json content/**/**/*.json || true
+          git add content/games/index.json content/builds/index.json content/guides/index.json content/tools/index.json || true
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "chore(content): update indexes & timestamps"
+            git commit -m "chore(content): rebuild indexes"
             git push
           fi
