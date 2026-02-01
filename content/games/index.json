@@ -1,6 +1,14 @@
 {
   "items": [
     {
+      "slug": "diablo-iv",
+      "name": "Diablo IV",
+      "status": "actif",
+      "cover": "/assets/media/DIV-cover.jpg",
+      "short": "Free-to-Play\nHack and Slash\nMultijoueur",
+      "publisher": "Blizzard Entertainment"
+    },
+    {
       "slug": "last-epoch",
       "name": "Last Epoch",
       "status": "actif",
