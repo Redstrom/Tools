@@ -12,6 +12,17 @@
       "gameStatus": "actif"
     },
     {
+      "slug": "filterblade",
+      "title": "FilterBlade",
+      "kind": "Plugin",
+      "url": "https://www.filterblade.xyz/?game=Poe2",
+      "notes": "Le classique de la gestion de loot filter",
+      "cover": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "mon-loot-filter",
       "title": "Mon Loot Filter",
       "kind": "Plugin",
