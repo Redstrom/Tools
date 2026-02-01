@@ -1,6 +1,18 @@
 {
   "items": [
     {
+      "slug": "juice-map",
+      "title": "Juice Map",
+      "resource": "",
+      "route": "Astuces pour faire de bonnes maps bien juiced",
+      "cover": "",
+      "date": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
+      "gameStatus": "actif",
+      "body": "Ordre des stats a prioriser sur les maps : Quantity > Rarity > Monsters Pack Size\n\nEmotions par rapports aux events :\n\n\\- Breach : Paranoia\n\n\\- Ritual : Guilt\n\nPrioriser les zones avec un maximum de tours a proximité avant de claquer les tablettes (2–3 breach + irradiated) avec des affixes de item quantity & pack de mobs rares"
+    },
+    {
       "slug": "speedleveling",
       "title": "SpeedLeveling",
       "resource": "https://www.lastepochtools.com/planner/A2Vlr59A",
