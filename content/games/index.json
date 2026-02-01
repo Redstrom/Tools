@@ -1,25 +1,28 @@
 {
   "items": [
     {
-      "slug": "counter-strike-2",
-      "name": "Counter-Strike 2",
+      "slug": "last-epoch",
+      "name": "Last Epoch",
       "status": "actif",
-      "cover": "/assets/media/cs2-cover.jpg",
-      "short": "FPS compétitif de Valve."
+      "cover": "/assets/media/LE-cover.png",
+      "short": "",
+      "publisher": "Eleventh Hour Games (EHG)"
     },
     {
-      "slug": "league-of-legends",
-      "name": "League of Legends",
+      "slug": "path-of-exile-I",
+      "name": "Path Of Exile I",
       "status": "actif",
-      "cover": "/assets/media/lol-cover.jpg",
-      "short": "MOBA compétitif en 5v5."
+      "cover": "/assets/media/POE1-cover.jpg",
+      "short": "Free-to-Play\nHack and Slash\nMultijoueur\nTheorycrafting",
+      "publisher": "Grinding Gear Games (GGG)"
     },
     {
-      "slug": "valorant",
-      "name": "Valorant",
+      "slug": "path-of-exile-II",
+      "name": "Path Of Exile II",
       "status": "actif",
-      "cover": "/assets/media/valorant-cover.jpg",
-      "short": "FPS tactique 5v5."
+      "cover": "/assets/media/POE2-cover.png",
+      "short": "Free-to-Play\nHack and Slash\nMultijoueur\nTheorycrafting",
+      "publisher": "Grinding Gear Games (GGG)"
     }
   ]
 }
