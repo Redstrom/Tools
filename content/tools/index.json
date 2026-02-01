@@ -1,14 +1,25 @@
 {
   "items": [
     {
+      "slug": "craft-of-exile-1",
+      "title": "Craft Of Exile 1",
+      "kind": "Site",
+      "url": "https://www.craftofexile.com/?game=poe1",
+      "notes": "Simulateur de craft, vous permet avant de faire des bêtises de vous initier au craft !",
+      "cover": "",
+      "gameName": "path-of-exile-I",
+      "gameDisplayName": "Path Of Exile I",
+      "gameStatus": "actif"
+    },
+    {
       "slug": "craft-of-exile-2",
       "title": "Craft Of Exile 2",
       "kind": "Site",
       "url": "https://www.craftofexile.com/?game=poe2",
       "notes": "Simulateur de craft, vous permet avant de faire des bêtises de vous initier au craft !",
       "cover": "",
-      "gameName": "",
-      "gameDisplayName": "",
+      "gameName": "path-of-exile-II",
+      "gameDisplayName": "Path Of Exile II",
       "gameStatus": "actif"
     },
     {
